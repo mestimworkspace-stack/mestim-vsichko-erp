@@ -3,128 +3,230 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Местим Всичко ERP - Admin</title>
+    <title>Местим Всичко ERP - Pro Admin</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
     <style>
-        body { font-family: 'Roboto', sans-serif; background: #f4f7f6; }
-        .sidebar { height: 100vh; background: #1f4e78; color: white; position: fixed; width: 250px; }
-        .sidebar a { color: white; text-decoration: none; padding: 15px; display: block; cursor: pointer; }
-        .sidebar a:hover { background: #2c6da3; }
-        .content { margin-left: 250px; padding: 30px; }
-        #calendar { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .card { border: none; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        body { font-family: 'Segoe UI', Roboto, sans-serif; background: #f8f9fa; }
+        .sidebar { height: 100vh; background: #1a3c5a; color: white; position: fixed; width: 260px; z-index: 1000; }
+        .sidebar a { color: rgba(255,255,255,0.8); text-decoration: none; padding: 15px 25px; display: block; border-left: 4px solid transparent; cursor: pointer; }
+        .sidebar a:hover, .sidebar a.active { background: #244d73; color: white; border-left-color: #00d1b2; }
+        .content { margin-left: 260px; padding: 40px; transition: 0.3s; }
+        .card { border: none; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 25px; }
+        #calendar { background: white; padding: 25px; border-radius: 12px; }
+        .fc-event { cursor: pointer; padding: 2px 5px; }
+        @media (max-width: 992px) { .sidebar { width: 0; overflow: hidden; } .content { margin-left: 0; } }
     </style>
 </head>
 <body>
 
     <div class="sidebar">
-        <div class="p-4 text-center"><h4>МЕСТИМ ВСИЧКО</h4></div>
-        <a onclick="showSection('calendar-sec')"><i class="fas fa-calendar-alt me-2"></i> Календар</a>
-        <a onclick="showSection('orders')"><i class="fas fa-truck me-2"></i> Поръчки</a>
-        <a onclick="showSection('clients')"><i class="fas fa-address-book me-2"></i> Клиенти</a>
-        <a onclick="showSection('employees')"><i class="fas fa-users me-2"></i> Служители</a>
+        <div class="p-4 mb-2">
+            <h4 class="mb-0 fw-bold">МЕСТИМ ВСИЧКО</h4>
+            <small class="opacity-50">ERP Система v2.5</small>
+        </div>
+        <a onclick="showSection('dashboard')"><i class="fas fa-calendar-alt me-3"></i> Календар</a>
+        <a onclick="showSection('orders')"><i class="fas fa-truck me-3"></i> Поръчки</a>
+        <a onclick="showSection('clients')"><i class="fas fa-address-book me-3"></i> Клиенти</a>
+        <a onclick="showSection('employees')"><i class="fas fa-users me-3"></i> Служители</a>
     </div>
 
     <div class="content">
-        <!-- CALENDAR SECTION -->
-        <section id="calendar-sec">
-            <h2 class="mb-4">График на поръчките</h2>
+        <!-- SECTION: DASHBOARD / CALENDAR -->
+        <section id="dashboard">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>График на дейностите</h2>
+                <button class="btn btn-success px-4" onclick="openOrderModal()"><i class="fas fa-plus me-2"></i> Нова поръчка</button>
+            </div>
             <div id="calendar"></div>
         </section>
 
-        <!-- CLIENTS SECTION -->
+        <!-- SECTION: ORDERS -->
+        <section id="orders" style="display:none;">
+            <h2 class="mb-4">Всички поръчки</h2>
+            <div id="orderList" class="row"></div>
+        </section>
+
+        <!-- SECTION: CLIENTS -->
         <section id="clients" style="display:none;">
             <div class="d-flex justify-content-between mb-4">
-                <h2>Клиенти</h2>
-                <div class="text-muted">Клиентите се добавят автоматично при нова поръчка.</div>
+                <h2>База данни клиенти</h2>
+                <button class="btn btn-primary" onclick="new bootstrap.Modal(document.getElementById('clientModal')).show()">+ Нов Клиент</button>
             </div>
-            <div class="card p-3"><table class="table"><thead><tr><th>Име</th><th>Телефон</th><th>Адрес</th></tr></thead><tbody id="clientTableBody"></tbody></table></div>
+            <div class="card p-3"><table class="table align-middle"><thead><tr><th>Име</th><th>Телефон</th><th>Адрес</th><th>Действие</th></tr></thead><tbody id="clientTableBody"></tbody></table></div>
         </section>
 
-        <!-- EMPLOYEES & ORDERS (Остават същите, но добавяме инициализация) -->
+        <!-- SECTION: EMPLOYEES -->
         <section id="employees" style="display:none;">
-            <div class="d-flex justify-content-between mb-4"><h2>Служители</h2><button class="btn btn-primary" onclick="new bootstrap.Modal(document.getElementById('empModal')).show()">+ Нов служител</button></div>
-            <div class="card p-3"><table class="table"><thead><tr><th>Име</th><th>Телефон</th><th>Ставка (2ч)</th></tr></thead><tbody id="empTableBody"></tbody></table></div>
-        </section>
-
-        <section id="orders" style="display:none;">
-            <div class="d-flex justify-content-between mb-4"><h2>Поръчки</h2><button class="btn btn-success" onclick="new bootstrap.Modal(document.getElementById('orderModal')).show()">+ Нова поръчка</button></div>
-            <div id="orderList" class="row"></div>
+            <div class="d-flex justify-content-between mb-4">
+                <h2>Служители</h2>
+                <button class="btn btn-primary" onclick="new bootstrap.Modal(document.getElementById('empModal')).show()">+ Нов Служител</button>
+            </div>
+            <div class="card p-3"><table class="table align-middle"><thead><tr><th>Име</th><th>Имейл</th><th>Ставка 2ч</th><th>Статус</th></tr></thead><tbody id="empTableBody"></tbody></table></div>
         </section>
     </div>
 
-    <!-- MODALS (Employee & Order - същите като преди) -->
-    <!-- ... (кодът за модалите е същият) ... -->
-    <div class="modal fade" id="empModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content p-3"><form id="empForm"><h5>Нов служител</h5><input type="text" name="Name" class="form-control mb-2" placeholder="Име" required><input type="email" name="Email" class="form-control mb-2" placeholder="Email" required><input type="text" name="Phone" class="form-control mb-2" placeholder="Телефон"><input type="number" name="Rate2h" class="form-control mb-2" placeholder="Ставка 2ч"><input type="number" step="0.01" name="RateMin" class="form-control mb-2" placeholder="Мин"><button type="submit" class="btn btn-primary w-100">Запази</button></form></div></div></div>
-    
-    <div class="modal fade" id="orderModal" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content p-3"><form id="orderForm"><h5>Нова поръчка</h5><div class="row"><div class="col"><input type="text" name="ClientName" class="form-control mb-2" placeholder="Име на клиент" required></div><div class="col"><input type="date" name="Date" class="form-control mb-2" required></div></div><input type="text" name="AddrStart" class="form-control mb-2" placeholder="От адрес" required><input type="text" name="AddrEnd" class="form-control mb-2" placeholder="До адрес" required><div class="card p-2 mb-2"><h6>Екип:</h6><div id="teamSelector" class="row p-2"></div></div><textarea name="Desc" class="form-control mb-2" placeholder="Описание"></textarea><button type="submit" class="btn btn-success w-100">Запиши</button></form></div></div></div>
+    <!-- MODAL: NEW CLIENT -->
+    <div class="modal fade" id="clientModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content p-4">
+        <form id="clientForm"><h5>Добавяне на клиент</h5>
+            <input type="text" name="Name" class="form-control mb-2" placeholder="Име / Фирма" required>
+            <input type="text" name="Phone" class="form-control mb-2" placeholder="Телефон" required>
+            <input type="text" name="Address" class="form-control mb-2" placeholder="Основен адрес">
+            <textarea name="Notes" class="form-control mb-3" placeholder="Бележки"></textarea>
+            <button type="submit" class="btn btn-primary w-100">Запази Клиент</button>
+        </form>
+    </div></div></div>
+
+    <!-- MODAL: NEW EMPLOYEE -->
+    <div class="modal fade" id="empModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content p-4">
+        <form id="empForm"><h5>Нов служител</h5>
+            <input type="text" name="Name" class="form-control mb-2" placeholder="Име и Фамилия" required>
+            <input type="email" name="Email" class="form-control mb-2" placeholder="Google Имейл" required>
+            <input type="text" name="Phone" class="form-control mb-2" placeholder="Телефон">
+            <div class="row mb-3">
+                <div class="col"><label class="small">Фикс 2ч (€)</label><input type="number" name="Rate2h" class="form-control" value="30"></div>
+                <div class="col"><label class="small">След това (€/мин)</label><input type="number" step="0.01" name="RateMin" class="form-control" value="0.25"></div>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Добави в екипа</button>
+        </form>
+    </div></div></div>
+
+    <!-- MODAL: NEW ORDER (ПЪЛНА ВЕРСИЯ) -->
+    <div class="modal fade" id="orderModal" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content p-4">
+        <form id="orderForm">
+            <h5 class="mb-4 text-success"><i class="fas fa-truck-loading me-2"></i>Детайли за нова поръчка</h5>
+            <div class="row mb-3">
+                <div class="col-md-6"><label>Клиент</label><select id="clientSelect" name="ClientId" class="form-select" required></select></div>
+                <div class="col-md-6"><label>Дата</label><input type="date" name="Date" class="form-control" required></div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-6"><label>Час От</label><input type="time" name="TimeStart" class="form-control" required></div>
+                <div class="col-md-6"><label>Очакван Край</label><input type="time" name="TimeEnd" class="form-control"></div>
+            </div>
+            <input type="text" name="AddrStart" class="form-control mb-2" placeholder="ОТ Адрес (Етаж, Асансьор...)" required>
+            <input type="text" name="AddrEnd" class="form-control mb-3" placeholder="ДО Адрес (Етаж, Асансьор...)" required>
+            
+            <div class="card p-3 bg-light mb-3">
+                <h6 class="border-bottom pb-2 mb-3">Избор на екип за изпълнение:</h6>
+                <div id="teamSelector" class="row"></div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6"><label>Кола 1 / Шофьор</label><input type="text" name="Vehicle1" class="form-control" placeholder="Рег. № / Име"></div>
+                <div class="col-md-6"><label>Кола 2 / Шофьор</label><input type="text" name="Vehicle2" class="form-control" placeholder="Рег. № / Име"></div>
+            </div>
+            <textarea name="Desc" class="form-control mb-3" rows="3" placeholder="Описание на багажа, специфични изисквания..."></textarea>
+            <button type="submit" class="btn btn-success w-100 py-2 fw-bold">СЪЗДАЙ ПОРЪЧКА И ИЗПРАТИ КЪМ ЕКИПА</button>
+        </form>
+    </div></div></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales/bg.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script>
-        const API_URL = "ТУК_ПОСТАВИ_ТВОЯ_URL";
-        let appData = { employees: [], orders: [], clients: [] };
+        const API_URL = "https://script.google.com/macros/s/AKfycbydPnSP-4WFI-oCSwIkuB79-ApVZutCw8hYa6vAiqOXp-CJk6V0TQPDPo43XrMKfNif-g/exec";
+        let appData = { employees: [], clients: [], orders: [] };
         let calendar;
 
         async function init() {
-            const resp = await fetch(`${API_URL}?action=getAdminData`);
-            appData = await resp.json();
+            Swal.fire({ title: 'Зареждане...', didOpen: () => Swal.showLoading() });
+            try {
+                const resp = await fetch(`${API_URL}?action=getAdminData`);
+                appData = await resp.json();
+                renderAll();
+                Swal.close();
+            } catch (e) { Swal.fire('Грешка', 'Неуспешна връзка с базата', 'error'); }
+        }
+
+        function renderAll() {
             renderCalendar();
             renderEmployees();
             renderClients();
             renderOrders();
             renderTeamSelector();
+            updateClientDropdown();
         }
 
         function showSection(id) {
             document.querySelectorAll('section').forEach(s => s.style.display = 'none');
             document.getElementById(id).style.display = 'block';
-            if (id === 'calendar-sec') calendar.render();
+            if (id === 'dashboard' && calendar) calendar.render();
         }
 
         function renderCalendar() {
             const calendarEl = document.getElementById('calendar');
-            const events = appData.orders.map(o => ({
-                title: `${o.Address_Start} -> ${o.Address_End}`,
-                start: o.Date,
-                extendedProps: { desc: o.Description }
-            }));
             calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'dayGridMonth',
-                events: events,
                 locale: 'bg',
+                events: appData.orders.map(o => ({
+                    title: `${o.Time_Start_Plan} | ${o.Address_Start}`,
+                    start: o.Date,
+                    color: '#1a3c5a'
+                })),
                 eventClick: (info) => Swal.fire('Детайли', info.event.title, 'info')
             });
             calendar.render();
         }
 
         function renderEmployees() {
-            document.getElementById('empTableBody').innerHTML = appData.employees.map(e => `<tr><td>${e.Name}</td><td>${e.Phone}</td><td>${e.Rate_First_2h_Eur}€</td></tr>`).join('');
+            document.getElementById('empTableBody').innerHTML = appData.employees.map(e => `
+                <tr><td><b>${e.Name}</b></td><td>${e.Email}</td><td>${e.Rate_First_2h_Eur}€</td><td><span class="badge bg-success">${e.Status}</span></td></tr>
+            `).join('');
         }
 
         function renderClients() {
-            document.getElementById('clientTableBody').innerHTML = appData.clients.map(c => `<tr><td>${c.Name}</td><td>${c.Phone}</td><td>${c.Address_Main}</td></tr>`).join('');
+            document.getElementById('clientTableBody').innerHTML = appData.clients.map(c => `
+                <tr><td><b>${c.Name}</b></td><td>${c.Phone}</td><td>${c.Address_Main || '---'}</td><td><button class="btn btn-sm btn-light">История</button></td></tr>
+            `).join('');
         }
 
-        function renderOrders() {
-            document.getElementById('orderList').innerHTML = appData.orders.map(o => `<div class="col-md-4"><div class="card p-3 mb-2"><h6>${o.Address_Start}</h6><small>${o.Date}</small></div></div>`).join('');
+        function updateClientDropdown() {
+            const select = document.getElementById('clientSelect');
+            select.innerHTML = '<option value="">Изберете клиент...</option>' + 
+                appData.clients.map(c => `<option value="${c.ID_Client}">${c.Name} (${c.Phone})</option>`).join('');
         }
 
         function renderTeamSelector() {
-            document.getElementById('teamSelector').innerHTML = appData.employees.map(e => `<div class="col-6"><input type="checkbox" class="team-check" value="${e.ID_Emp}"> ${e.Name}</div>`).join('');
+            document.getElementById('teamSelector').innerHTML = appData.employees.map(e => `
+                <div class="col-md-4 mb-2"><div class="form-check">
+                    <input class="form-check-input team-check" type="checkbox" value="${e.ID_Emp}" id="te_${e.ID_Emp}">
+                    <label class="form-check-label small">${e.Name}</label>
+                </div></div>
+            `).join('');
         }
 
-        document.getElementById('orderForm').onsubmit = async (e) => {
-            e.preventDefault();
-            const data = Object.fromEntries(new FormData(e.target));
-            data.action = "addOrder";
-            data.TeamIds = Array.from(document.querySelectorAll('.team-check:checked')).map(c => c.value);
-            await fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) });
-            Swal.fire('Успех', 'Поръчката е в графика!', 'success').then(() => location.reload());
+        function renderOrders() {
+            document.getElementById('orderList').innerHTML = appData.orders.map(o => `
+                <div class="col-md-6 mb-3"><div class="card p-3 border-start border-primary border-4">
+                    <div class="d-flex justify-content-between mb-2"><span class="badge bg-light text-dark">#${o.ID_Order}</span><b>${o.Date}</b></div>
+                    <h6 class="text-primary mb-1">${o.Address_Start}</h6>
+                    <small class="text-muted d-block mb-2">${o.Description || ''}</small>
+                </div></div>
+            `).join('');
+        }
+
+        function openOrderModal() {
+            new bootstrap.Modal(document.getElementById('orderModal')).show();
+        }
+
+        // FORM SUBMITS
+        document.getElementById('empForm').onsubmit = (e) => handleForm(e, "addEmployee");
+        document.getElementById('clientForm').onsubmit = (e) => handleForm(e, "addClient");
+        document.getElementById('orderForm').onsubmit = (e) => {
+            const team = Array.from(document.querySelectorAll('.team-check:checked')).map(c => c.value);
+            handleForm(e, "addOrder", { TeamIds: team });
         };
+
+        async function handleForm(e, action, extra = {}) {
+            e.preventDefault();
+            const data = { ...Object.fromEntries(new FormData(e.target)), action, ...extra };
+            Swal.fire({ title: 'Записване...', didOpen: () => Swal.showLoading() });
+            await fetch(API_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) });
+            Swal.fire('Успех!', 'Данните са записани', 'success').then(() => location.reload());
+        }
 
         window.onload = init;
     </script>
