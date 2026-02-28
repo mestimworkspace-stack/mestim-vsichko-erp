@@ -3,85 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mestim Vsichko Admin v4</title>
+    <title>Mestim Vsichko ERP v5</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
     <style>
         body { font-family: 'Segoe UI', sans-serif; background: #f4f7f6; }
-        .sidebar { height: 100vh; background: #1a3c5a; color: white; position: fixed; width: 250px; }
-        .sidebar a { color: white; text-decoration: none; padding: 15px 25px; display: block; cursor: pointer; }
-        .sidebar a:hover, .sidebar a.active { background: #244d73; border-left: 5px solid #00d1b2; }
-        .content { margin-left: 250px; padding: 30px; }
-        #calendar { background: white; padding: 20px; border-radius: 12px; min-height: 600px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        .card { border: none; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .sidebar { height: 100vh; background: #1a3c5a; color: white; position: fixed; width: 250px; z-index: 1000; }
+        .sidebar a { color: white; text-decoration: none; padding: 15px 25px; display: block; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .sidebar a:hover { background: #244d73; }
+        .content { margin-left: 250px; padding: 30px; min-height: 100vh; }
+        #calendar { background: white; padding: 20px; border-radius: 12px; height: 700px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .card { border: none; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        .fc-event { cursor: pointer; padding: 2px; }
     </style>
 </head>
 <body>
 
     <div class="sidebar">
-        <div class="p-4"><h4 class="fw-bold">ERP МЕСТИМ</h4></div>
+        <div class="p-4"><h4 class="fw-bold text-center">МЕСТИМ ВСИЧКО</h4></div>
         <a onclick="showSection('dashboard')"><i class="fas fa-calendar-alt me-2"></i> График</a>
-        <a onclick="showSection('orders-sec')"><i class="fas fa-list me-2"></i> Поръчки</a>
-        <a onclick="showSection('clients')"><i class="fas fa-users me-2"></i> Клиенти</a>
-        <a onclick="showSection('employees')"><i class="fas fa-user-friends me-2"></i> Екип</a>
+        <a onclick="showSection('orders-sec')"><i class="fas fa-truck me-2"></i> Поръчки</a>
+        <a onclick="showSection('clients-sec')"><i class="fas fa-address-book me-2"></i> Клиенти</a>
+        <a onclick="showSection('emps-sec')"><i class="fas fa-users me-2"></i> Екип</a>
     </div>
 
     <div class="content">
-        <!-- GRAPHIC / CALENDAR -->
+        <!-- CALENDAR -->
         <section id="dashboard">
-            <div class="d-flex justify-content-between mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2>Месечен график</h2>
                 <button class="btn btn-success rounded-pill px-4" onclick="openOrderModal()">+ НОВА ПОРЪЧКА</button>
             </div>
             <div id="calendar"></div>
         </section>
 
-        <!-- ORDERS -->
+        <!-- ORDERS LIST -->
         <section id="orders-sec" style="display:none;">
             <div class="d-flex justify-content-between mb-4">
-                <h2>Списък поръчки</h2>
-                <input type="text" id="orderSearch" class="form-control w-50" placeholder="Търси по клиент или адрес..." onkeyup="filterOrders()">
+                <h2>Всички поръчки</h2>
+                <input type="text" id="orderSearch" class="form-control w-50" placeholder="Търси клиент или адрес..." onkeyup="filterOrders()">
             </div>
             <div id="orderList" class="row"></div>
         </section>
 
         <!-- CLIENTS -->
-        <section id="clients" style="display:none;">
+        <section id="clients-sec" style="display:none;">
             <div class="d-flex justify-content-between mb-4"><h2>Клиенти</h2><button class="btn btn-primary" onclick="new bootstrap.Modal(document.getElementById('clientModal')).show()">+ Нов Клиент</button></div>
-            <div class="card p-3"><table class="table"><thead><tr><th>Име</th><th>Телефон</th><th>Адрес</th></tr></thead><tbody id="clientTableBody"></tbody></table></div>
+            <div class="card p-3"><table class="table"><thead><tr><th>Име</th><th>Телефон</th><th>Адрес</th></tr></thead><tbody id="clientTable"></tbody></table></div>
         </section>
 
         <!-- EMPLOYEES -->
-        <section id="employees" style="display:none;">
+        <section id="emps-sec" style="display:none;">
             <div class="d-flex justify-content-between mb-4"><h2>Служители</h2><button class="btn btn-primary" onclick="new bootstrap.Modal(document.getElementById('empModal')).show()">+ Нов Служител</button></div>
-            <div class="card p-3"><table class="table"><thead><tr><th>Име</th><th>Имейл</th></tr></thead><tbody id="empTableBody"></tbody></table></div>
+            <div class="card p-3"><table class="table"><thead><tr><th>Име</th><th>Имейл</th></tr></thead><tbody id="empTable"></tbody></table></div>
         </section>
     </div>
 
     <!-- MODAL: NEW ORDER -->
     <div class="modal fade" id="orderModal" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content p-4">
         <form id="orderForm">
-            <h4 class="mb-4">Детайли за нова работа</h4>
+            <h4 class="mb-4 text-primary">Създаване на поръчка</h4>
             <div class="row mb-3">
-                <div class="col-md-6"><label>Търси клиент</label><input list="clientList" id="clientSearchInput" class="form-control" placeholder="Име..." required><datalist id="clientList"></datalist></div>
+                <div class="col-md-6"><label>Търси Клиент</label><input list="clientData" id="clientInp" class="form-control" placeholder="Напишете име..." required><datalist id="clientData"></datalist></div>
                 <div class="col-md-6"><label>Дата</label><input type="date" name="Date" class="form-control" required></div>
             </div>
             <div class="row mb-3">
-                <div class="col-md-6"><label>Час НАЧАЛО</label><input type="time" name="TimeStart" class="form-control" required></div>
-                <div class="col-md-6"><label>Час КРАЙ</label><input type="time" name="TimeEnd" class="form-control"></div>
+                <div class="col-md-6"><label>Начало</label><input type="time" name="TimeStart" class="form-control" required></div>
+                <div class="col-md-6"><label>Край</label><input type="time" name="TimeEnd" class="form-control"></div>
             </div>
             <input type="text" name="AddrStart" class="form-control mb-2" placeholder="ОТ Адрес" required>
             <input type="text" name="AddrEnd" class="form-control mb-3" placeholder="ДО Адрес" required>
-            <div class="card p-3 bg-light mb-3"><h6>Екип (избери хора):</h6><div id="teamSelector" class="row"></div></div>
-            <textarea name="Desc" class="form-control mb-3" placeholder="Описание..."></textarea>
-            <button type="submit" class="btn btn-success w-100 py-3 fw-bold">ЗАПИШИ ПОРЪЧКА</button>
+            <div class="card p-3 bg-light mb-3"><h6>Избери екип:</h6><div id="teamPick" class="row"></div></div>
+            <textarea name="Desc" class="form-control mb-3" placeholder="Допълнителни бележки..."></textarea>
+            <button type="submit" class="btn btn-success w-100 py-2">ЗАПИШИ В ГРАФИКА</button>
         </form>
     </div></div></div>
 
     <!-- MODALS: EMP & CLIENT -->
-    <div class="modal fade" id="empModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content p-4"><form id="empForm"><h5>Нов служител</h5><input type="text" name="Name" class="form-control mb-2" placeholder="Име" required><input type="email" name="Email" class="form-control mb-2" placeholder="Email" required><input type="number" name="Rate2h" class="form-control mb-2" placeholder="2ч (€)"><input type="number" step="0.01" name="RateMin" class="form-control mb-2" placeholder="Мин (€)"><button type="submit" class="btn btn-primary w-100">Запази</button></form></div></div></div>
-    <div class="modal fade" id="clientModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content p-4"><form id="clientForm"><h5>Нов клиент</h5><input type="text" name="Name" class="form-control mb-2" placeholder="Име" required><input type="text" name="Phone" class="form-control mb-2" placeholder="Телефон" required><input type="text" name="Address" class="form-control mb-2" placeholder="Адрес"><button type="submit" class="btn btn-primary w-100">Запази</button></form></div></div></div>
+    <div class="modal fade" id="empModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content p-4"><form id="empForm"><h5>Нов служител</h5><input type="text" name="Name" class="form-control mb-2" required placeholder="Име"><input type="email" name="Email" class="form-control mb-2" required placeholder="Email"><button type="submit" class="btn btn-primary w-100">Запази</button></form></div></div></div>
+    <div class="modal fade" id="clientModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content p-4"><form id="clientForm"><h5>Нов клиент</h5><input type="text" name="Name" class="form-control mb-2" required placeholder="Име"><input type="text" name="Phone" class="form-control mb-2" required placeholder="Телефон"><input type="text" name="Address" class="form-control mb-2" placeholder="Адрес"><button type="submit" class="btn btn-primary w-100">Запази</button></form></div></div></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
@@ -98,7 +99,7 @@
                 const resp = await fetch(`${API_URL}?action=getAdminData`);
                 appData = await resp.json();
                 renderAll();
-            } catch (e) { console.error(e); }
+            } catch (e) { console.error("Load error:", e); }
         }
 
         function showSection(id) {
@@ -108,18 +109,32 @@
         }
 
         function renderAll() {
-            renderEmployees();
-            renderClients();
-            renderOrders();
-            renderTeamSelector();
-            renderCalendar();
-            document.getElementById('clientList').innerHTML = (appData.clients || []).map(c => `<option value="${c.Name}"></option>`).join('');
+            // Employees Table
+            document.getElementById('empTable').innerHTML = (appData.employees || []).map(e => `<tr><td>${e.Name}</td><td>${e.Email}</td></tr>`).join('');
+            // Clients Table
+            document.getElementById('clientTable').innerHTML = (appData.clients || []).map(c => `<tr><td>${c.Name}</td><td>${c.Phone}</td><td>${c.Address_Main}</td></tr>`).join('');
+            // Orders Cards
+            document.getElementById('orderList').innerHTML = (appData.orders || []).sort((a,b) => new Date(b.Date) - new Date(a.Date)).map(o => `
+                <div class="col-md-6 order-card-item" data-search="${o.Client_ID} ${o.Address_Start}">
+                    <div class="card p-3 border-start border-primary border-4">
+                        <div class="d-flex justify-content-between mb-2"><b>${o.Date} | ${o.Time_Start_Plan}</b><span class="badge bg-light text-dark">#${o.ID_Order}</span></div>
+                        <h5 class="text-primary mb-1">${o.Client_ID}</h5>
+                        <small class="text-muted">ОТ: ${o.Address_Start}<br>ДО: ${o.Address_End}</small>
+                    </div>
+                </div>
+            `).join('');
+            // Team Selection
+            document.getElementById('teamPick').innerHTML = (appData.employees || []).map(e => `<div class="col-6 mb-1 small"><input type="checkbox" class="team-chk" value="${e.ID_Emp}"> ${e.Name}</div>`).join('');
+            // Client Datalist
+            document.getElementById('clientData').innerHTML = (appData.clients || []).map(c => `<option value="${c.Name}"></option>`).join('');
+            
+            initCalendar();
         }
 
-        function renderCalendar() {
-            const calendarEl = document.getElementById('calendar');
+        function initCalendar() {
+            const el = document.getElementById('calendar');
             if (calendar) calendar.destroy();
-            calendar = new FullCalendar.Calendar(calendarEl, {
+            calendar = new FullCalendar.Calendar(el, {
                 initialView: 'dayGridMonth',
                 locale: 'bg',
                 headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek,timeGridDay' },
@@ -134,30 +149,9 @@
             calendar.render();
         }
 
-        function renderEmployees() {
-            document.getElementById('empTableBody').innerHTML = (appData.employees || []).map(e => `<tr><td><b>${e.Name}</b></td><td>${e.Email}</td></tr>`).join('');
-            document.getElementById('teamSelector').innerHTML = (appData.employees || []).map(e => `<div class="col-4 small"><input type="checkbox" class="team-check" value="${e.ID_Emp}"> ${e.Name}</div>`).join('');
-        }
-
-        function renderClients() {
-            document.getElementById('clientTableBody').innerHTML = (appData.clients || []).map(c => `<tr><td><b>${c.Name}</b></td><td>${c.Phone}</td><td>${c.Address_Main}</td></tr>`).join('');
-        }
-
-        function renderOrders() {
-            document.getElementById('orderList').innerHTML = (appData.orders || []).sort((a,b) => new Date(b.Date) - new Date(a.Date)).map(o => `
-                <div class="col-md-6 mb-3 order-item" data-search="${o.Client_ID} ${o.Address_Start}">
-                    <div class="card p-3 shadow-sm border-start border-primary border-4">
-                        <div class="d-flex justify-content-between mb-2"><span class="badge bg-primary">#${o.ID_Order}</span><span class="small">${o.Date} | ${o.Time_Start_Plan}</span></div>
-                        <h5 class="text-primary mb-1">${o.Client_ID}</h5>
-                        <p class="small mb-1"><b>ОТ:</b> ${o.Address_Start}<br><b>ДО:</b> ${o.Address_End}</p>
-                    </div>
-                </div>
-            `).join('');
-        }
-
         function filterOrders() {
             const val = document.getElementById('orderSearch').value.toLowerCase();
-            document.querySelectorAll('.order-item').forEach(el => el.style.display = el.getAttribute('data-search').toLowerCase().includes(val) ? 'block' : 'none');
+            document.querySelectorAll('.order-card-item').forEach(el => el.style.display = el.getAttribute('data-search').toLowerCase().includes(val) ? 'block' : 'none');
         }
 
         function openOrderModal() { new bootstrap.Modal(document.getElementById('orderModal')).show(); }
@@ -166,14 +160,15 @@
             e.preventDefault();
             const data = Object.fromEntries(new FormData(e.target));
             data.action = "addOrder";
-            data.ClientName = document.getElementById('clientSearchInput').value;
-            data.TeamIds = Array.from(document.querySelectorAll('.team-check:checked')).map(c => c.value);
+            data.ClientName = document.getElementById('clientInp').value;
+            data.TeamIds = Array.from(document.querySelectorAll('.team-chk:checked')).map(c => c.value);
             
             Swal.fire({title:'Записване...', didOpen:()=>Swal.showLoading()});
             await fetch(API_URL, {method:'POST', mode:'no-cors', body:JSON.stringify(data)});
-            Swal.fire('Успех!','Готово','success').then(()=>location.reload());
+            Swal.fire('Успех!','Поръчката е добавена','success').then(()=>location.reload());
         };
 
+        // Standard forms
         document.getElementById('empForm').onsubmit = (e) => handleForm(e, "addEmployee");
         document.getElementById('clientForm').onsubmit = (e) => handleForm(e, "addClient");
 
