@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mestim Vsichko ERP v6</title>
+    <title>Mestim Vsichko ERP - FINAL</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
@@ -15,7 +15,7 @@
         .content { margin-left: 250px; padding: 30px; min-height: 100vh; }
         #calendar { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); min-height: 700px; }
         .card { border: none; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        .order-card { border-top: 5px solid #1a3c5a; position: relative; }
+        .order-card { border-top: 5px solid #1a3c5a; transition: 0.3s; }
         .team-badge { background: #eef2f7; color: #1a3c5a; padding: 3px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; margin: 2px; display: inline-block; }
     </style>
 </head>
@@ -25,39 +25,45 @@
         <div class="p-4 text-center"><h4 class="fw-bold">МЕСТИМ ВСИЧКО</h4></div>
         <a onclick="showSection('dashboard')"><i class="fas fa-calendar-alt me-2"></i> График</a>
         <a onclick="showSection('orders-sec')"><i class="fas fa-list-ul me-2"></i> Поръчки</a>
+        <a onclick="showSection('payroll-sec')"><i class="fas fa-euro-sign me-2"></i> Заплати</a>
         <a onclick="showSection('clients-sec')"><i class="fas fa-address-book me-2"></i> Клиенти</a>
         <a onclick="showSection('emps-sec')"><i class="fas fa-user-tie me-2"></i> Екип</a>
     </div>
 
     <div class="content">
         <section id="dashboard">
-            <div class="d-flex justify-content-between mb-4"><h2>График</h2><button class="btn btn-success rounded-pill px-4 shadow" onclick="openOrderModal()">+ НОВА ПОРЪЧКА</button></div>
+            <div class="d-flex justify-content-between mb-4"><h2>График</h2><button class="btn btn-success rounded-pill px-4" onclick="openOrderModal()">+ НОВА ПОРЪЧКА</button></div>
             <div id="calendar"></div>
         </section>
 
+        <section id="payroll-sec" style="display:none;">
+            <h2>Дължими суми към екипа</h2>
+            <div class="card p-3 shadow-sm"><table class="table align-middle"><thead><tr><th>Служител</th><th>Часове (неплатени)</th><th>Сума за изплащане</th><th>Действие</th></tr></thead><tbody id="payrollTable"></tbody></table></div>
+        </section>
+
         <section id="orders-sec" style="display:none;">
-            <div class="d-flex justify-content-between mb-4"><h2>Поръчки</h2><input type="text" class="form-control w-50" placeholder="Търси..." onkeyup="filterOrders(this.value)"></div>
+            <div class="d-flex justify-content-between mb-4"><h2>Всички Поръчки</h2><input type="text" class="form-control w-50" placeholder="Търси..." onkeyup="filterOrders(this.value)"></div>
             <div id="orderList" class="row"></div>
         </section>
 
         <section id="clients-sec" style="display:none;">
-            <div class="d-flex justify-content-between mb-4"><h2>Клиенти</h2><button class="btn btn-primary shadow" onclick="openClientModal()">+ НОВ КЛИЕНТ</button></div>
-            <div class="card p-3"><table class="table"><thead><tr><th>Име</th><th>Телефон</th><th>Действия</th></tr></thead><tbody id="clientTable"></tbody></table></div>
+            <div class="d-flex justify-content-between mb-4"><h2>Клиенти</h2><button class="btn btn-primary" onclick="openClientModal()">+ НОВ КЛИЕНТ</button></div>
+            <div class="card p-3"><table class="table"><thead><tr><th>Име</th><th>Телефон</th><th>Действие</th></tr></thead><tbody id="clientTable"></tbody></table></div>
         </section>
 
         <section id="emps-sec" style="display:none;">
-            <div class="d-flex justify-content-between mb-4"><h2>Екип</h2><button class="btn btn-primary shadow" onclick="openEmpModal()">+ НОВ СЛУЖИТЕЛ</button></div>
-            <div class="card p-3"><table class="table"><thead><tr><th>Име</th><th>Email</th><th>Действия</th></tr></thead><tbody id="empTable"></tbody></table></div>
+            <div class="d-flex justify-content-between mb-4"><h2>Екип</h2><button class="btn btn-primary" onclick="openEmpModal()">+ НОВ СЛУЖИТЕЛ</button></div>
+            <div class="card p-3"><table class="table"><thead><tr><th>Име</th><th>Email</th><th>Действие</th></tr></thead><tbody id="empTable"></tbody></table></div>
         </section>
     </div>
 
-    <!-- MODAL: ORDER FORM -->
+    <!-- ORDER MODAL -->
     <div class="modal fade" id="orderModal" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content p-4 shadow-lg">
         <form id="orderForm">
             <input type="hidden" name="ID_Order" id="o_id">
-            <h4 id="o_title" class="mb-4 text-primary">Нова Поръчка</h4>
+            <h4 class="mb-4 text-primary">Детайли за поръчка</h4>
             <div class="row mb-3">
-                <div class="col-md-6"><label>Клиент</label><input list="clientData" id="o_client" class="form-control" required placeholder="Име..."><datalist id="clientData"></datalist></div>
+                <div class="col-md-6"><label>Клиент</label><input list="clientData" id="o_client" class="form-control" required placeholder="Търси име..."><datalist id="clientData"></datalist></div>
                 <div class="col-md-6"><label>Услуга</label><select name="Service" id="o_service" class="form-select" required></select></div>
             </div>
             <div class="row mb-3">
@@ -69,18 +75,13 @@
                 <div class="col-md-6"><label>ОТ Адрес</label><input type="text" name="AddrStart" id="o_addr1" class="form-control" required></div>
                 <div class="col-md-6"><label>ДО Адрес</label><input type="text" name="AddrEnd" id="o_addr2" class="form-control" required></div>
             </div>
-            <div class="card p-3 bg-light mb-3"><h6>Екип за изпълнение:</h6><div id="teamPick" class="row"></div></div>
+            <div class="card p-3 bg-light mb-3"><h6>Екип:</h6><div id="teamPick" class="row"></div></div>
             <textarea name="Desc" id="o_desc" class="form-control mb-3" placeholder="Описание/Бележки..."></textarea>
             <button type="submit" class="btn btn-success w-100 py-3 fw-bold">ЗАПАЗИ</button>
         </form>
     </div></div></div>
 
-    <!-- CLIENT MODAL -->
-    <div class="modal fade" id="clientModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content p-4"><form id="clientForm"><input type="hidden" name="ID_Client" id="c_id"><h5 id="c_title">Клиент</h5><input type="text" name="Name" id="c_name" class="form-control mb-2" placeholder="Име" required><input type="text" name="Phone" id="c_phone" class="form-control mb-2" placeholder="Телефон" required><input type="text" name="Address" id="c_addr" class="form-control mb-2" placeholder="Адрес"><textarea name="Notes" id="c_notes" class="form-control mb-3" placeholder="Бележки"></textarea><button type="submit" class="btn btn-primary w-100">Запази</button></form></div></div></div>
-
-    <!-- EMP MODAL -->
-    <div class="modal fade" id="empModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content p-4"><form id="empForm"><input type="hidden" name="ID_Emp" id="e_id"><h5 id="e_title">Служител</h5><input type="text" name="Name" id="e_name" class="form-control mb-2" required placeholder="Име"><input type="email" name="Email" id="e_email" class="form-control mb-2" required placeholder="Email"><input type="text" name="Phone" id="e_phone" class="form-control mb-2" placeholder="Телефон"><div class="row mb-2"><div class="col"><input type="number" name="Rate2h" id="e_r1" class="form-control" placeholder="2ч (€)"></div><div class="col"><input type="number" step="0.01" name="RateMin" id="e_r2" class="form-control" placeholder="Мин"></div></div><button type="submit" class="btn btn-primary w-100">Запази</button></form></div></div></div>
-
+    <!-- SCRIPTS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales/bg.js"></script>
@@ -92,35 +93,36 @@
         let calendar;
 
         async function init() {
-            Swal.fire({title: 'Зареждане...', didOpen: () => Swal.showLoading()});
-            const resp = await fetch(API_URL);
+            Swal.fire({title: 'Синхронизиране...', didOpen: () => Swal.showLoading()});
+            const resp = await fetch(API_URL + "?action=getAdminData");
             appData = await resp.json();
             renderAll();
             Swal.close();
         }
 
         function renderAll() {
-            // Calendar
+            // Календар (ПЪЛЕН)
+            const calendarEl = document.getElementById('calendar');
             if (calendar) calendar.destroy();
-            calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
+            calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'dayGridMonth', locale: 'bg',
                 headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek' },
                 events: appData.orders.map(o => {
                     const client = appData.clients.find(c => c.Name === o.Client_ID);
                     const phone = client ? client.Phone : 'Няма тел.';
                     return {
-                        title: `${o.Time_Start_Plan} | ${o.Service} - ${o.Client_ID} (${phone})`,
+                        title: `${o.Time_Start_Plan} | ${o.Client_ID} (${phone})`,
                         start: `${o.Date}T${o.Time_Start_Plan}`,
                         end: o.Time_End_Plan ? `${o.Date}T${o.Time_End_Plan}` : null,
                         color: '#1a3c5a',
                         extendedProps: { ...o, phone }
                     };
                 }),
-                eventClick: (info) => showOrderDetails(info.event.extendedProps)
+                eventClick: (info) => Swal.fire(info.event.extendedProps.Service, info.event.title, 'info')
             });
             calendar.render();
 
-            // Order Cards
+            // ПОРЪЧКИ
             document.getElementById('orderList').innerHTML = appData.orders.sort((a,b) => new Date(b.Date) - new Date(a.Date)).map(o => {
                 const client = appData.clients.find(c => c.Name === o.Client_ID);
                 const phone = client ? client.Phone : 'Няма тел.';
@@ -128,30 +130,27 @@
                 return `
                 <div class="col-md-6 mb-3 order-item" data-search="${o.Client_ID} ${phone} ${o.Address_Start}">
                     <div class="card p-3 order-card h-100">
-                        <div class="d-flex justify-content-between align-items-center mb-2"><span class="badge bg-primary">${o.Service}</span><button class="btn btn-sm btn-outline-primary" onclick='editOrder(${JSON.stringify(o)})'><i class="fas fa-edit"></i></button></div>
+                        <div class="d-flex justify-content-between mb-2"><span class="badge bg-primary">${o.Service}</span><button class="btn btn-sm btn-outline-primary" onclick='editOrder(${JSON.stringify(o)})'><i class="fas fa-edit"></i></button></div>
                         <h5 class="mb-0 text-primary">${o.Client_ID}</h5>
-                        <div class="text-muted small mb-2 fw-bold"><i class="fas fa-phone-alt me-1"></i> ${phone}</div>
+                        <div class="text-muted small mb-2"><b>Тел:</b> ${phone}</div>
                         <p class="small mb-1"><b>ОТ:</b> ${o.Address_Start}<br><b>ДО:</b> ${o.Address_End}</p>
                         <div class="small mb-2 text-dark"><b>Екип:</b> ${team}</div>
-                        <div class="small text-secondary border-top pt-1 italic text-truncate">${o.Description || 'Без описание'}</div>
+                        <div class="small text-secondary border-top pt-1 text-truncate">${o.Description || ''}</div>
                     </div>
                 </div>`;
             }).join('');
 
-            // Data Lists
+            // ПАРИ (ЗАПЛАТИ)
+            document.getElementById('payrollTable').innerHTML = appData.employees.map(e => `
+                <tr><td><b>${e.Name}</b></td><td>${e.Total_Hours} ч.</td><td class="text-success fw-bold">${e.Total_Unpaid_Eur} €</td><td><button class="btn btn-sm btn-success">Плати</button></td></tr>
+            `).join('');
+
+            // ДРУГИ
             document.getElementById('clientData').innerHTML = appData.clients.map(c => `<option value="${c.Name}"></option>`).join('');
             document.getElementById('o_service').innerHTML = appData.services.map(s => `<option value="${s.trim()}">${s.trim()}</option>`).join('');
-            document.getElementById('clientTable').innerHTML = appData.clients.map(c => `<tr><td><b>${c.Name}</b></td><td>${c.Phone}</td><td><button class="btn btn-sm btn-outline-primary" onclick='editClient(${JSON.stringify(c)})'><i class="fas fa-edit"></i></button></td></tr>`).join('');
-            document.getElementById('empTable').innerHTML = appData.employees.map(e => `<tr><td><b>${e.Name}</b></td><td>${e.Email}</td><td><button class="btn btn-sm btn-outline-primary" onclick='editEmp(${JSON.stringify(e)})'><i class="fas fa-edit"></i></button></td></tr>`).join('');
             document.getElementById('teamPick').innerHTML = appData.employees.map(e => `<div class="col-4 small mb-1"><input type="checkbox" class="team-chk" value="${e.ID_Emp}"> ${e.Name}</div>`).join('');
-        }
-
-        function showOrderDetails(o) {
-            Swal.fire({
-                title: o.Service,
-                html: `<div class="text-start"><b>Клиент:</b> ${o.Client_ID} (${o.phone})<br><b>Адрес:</b> ${o.Address_Start} &rarr; ${o.Address_End}<br><b>Бележки:</b> ${o.Description}</div>`,
-                confirmButtonText: 'Редактирай'
-            }).then((res) => { if(res.isConfirmed) editOrder(o); });
+            document.getElementById('clientTable').innerHTML = appData.clients.map(c => `<tr><td>${c.Name}</td><td>${c.Phone}</td><td><button class="btn btn-sm btn-light">Едит</button></td></tr>`).join('');
+            document.getElementById('empTable').innerHTML = appData.employees.map(e => `<tr><td>${e.Name}</td><td>${e.Email}</td><td><button class="btn btn-sm btn-light">Едит</button></td></tr>`).join('');
         }
 
         function editOrder(o) {
@@ -169,35 +168,19 @@
             new bootstrap.Modal(document.getElementById('orderModal')).show();
         }
 
-        function editClient(c) {
-            document.getElementById('c_id').value = c.ID_Client;
-            document.getElementById('c_name').value = c.Name;
-            document.getElementById('c_phone').value = c.Phone;
-            document.getElementById('c_addr').value = c.Address_Main;
-            document.getElementById('c_notes').value = c.Notes;
-            new bootstrap.Modal(document.getElementById('clientModal')).show();
-        }
-
-        function editEmp(e) {
-            document.getElementById('e_id').value = e.ID_Emp;
-            document.getElementById('e_name').value = e.Name;
-            document.getElementById('e_email').value = e.Email;
-            document.getElementById('e_phone').value = e.Phone;
-            document.getElementById('e_r1').value = e.Rate_First_2h_Eur;
-            document.getElementById('e_r2').value = e.Rate_Per_Min_Eur;
-            new bootstrap.Modal(document.getElementById('empModal')).show();
-        }
-
         function openOrderModal() { document.getElementById('orderForm').reset(); document.getElementById('o_id').value = ""; new bootstrap.Modal(document.getElementById('orderModal')).show(); }
-        function openClientModal() { document.getElementById('clientForm').reset(); document.getElementById('c_id').value = ""; new bootstrap.Modal(document.getElementById('clientModal')).show(); }
-        function openEmpModal() { document.getElementById('empForm').reset(); document.getElementById('e_id').value = ""; new bootstrap.Modal(document.getElementById('empModal')).show(); }
 
-        document.getElementById('orderForm').onsubmit = (e) => { e.preventDefault(); const data = Object.fromEntries(new FormData(e.target)); data.action = data.ID_Order ? "editOrder" : "addOrder"; data.ClientName = document.getElementById('o_client').value; data.TeamIds = Array.from(document.querySelectorAll('.team-chk:checked')).map(c => c.value); send(data); };
-        document.getElementById('clientForm').onsubmit = (e) => { e.preventDefault(); const data = Object.fromEntries(new FormData(e.target)); data.action = data.ID_Client ? "editClient" : "addClient"; send(data); };
-        document.getElementById('empForm').onsubmit = (e) => { e.preventDefault(); const data = Object.fromEntries(new FormData(e.target)); data.action = data.ID_Emp ? "editEmployee" : "addEmployee"; send(data); };
+        document.getElementById('orderForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const data = Object.fromEntries(new FormData(e.target));
+            data.action = data.ID_Order ? "editOrder" : "addOrder";
+            data.ClientName = document.getElementById('o_client').value;
+            data.TeamIds = Array.from(document.querySelectorAll('.team-chk:checked')).map(c => c.value);
+            await send(data);
+        };
 
         async function send(data) {
-            Swal.fire({title:'Запазване...', didOpen:()=>Swal.showLoading()});
+            Swal.fire({title:'Записване...', didOpen:()=>Swal.showLoading()});
             await fetch(API_URL, {method:'POST', mode:'no-cors', body:JSON.stringify(data)});
             location.reload();
         }
