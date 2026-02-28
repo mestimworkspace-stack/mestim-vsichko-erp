@@ -163,3 +163,40 @@
             document.getElementById('orderForm').reset();
             document.getElementById('o_id').value = o.ID_Order;
             document.getElementById('o_client').value = o.Client_ID;
+            document.getElementById('o_service').value = o.Service;
+            document.getElementById('o_date').value = o.Date;
+            document.getElementById('o_start').value = o.Time_Start_Plan;
+            document.getElementById('o_end').value = o.Time_End_Plan;
+            document.getElementById('o_addr1').value = o.Address_Start;
+            document.getElementById('o_addr2').value = o.Address_End;
+            document.getElementById('o_desc').value = o.Description;
+            const currentAssigns = appData.assignments.filter(a => a.Order_ID == o.ID_Order).map(a => a.Emp_ID.toString());
+            document.querySelectorAll('.team-chk').forEach(cb => cb.checked = currentAssigns.includes(cb.value.toString()));
+            new bootstrap.Modal(document.getElementById('orderModal')).show();
+        }
+
+        document.getElementById('orderForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const data = Object.fromEntries(new FormData(e.target));
+            data.action = data.ID_Order ? "editOrder" : "addOrder";
+            data.ClientName = document.getElementById('o_client').value;
+            data.TeamIds = Array.from(document.querySelectorAll('.team-chk:checked')).map(c => c.value);
+            await fetch(API_URL, {method:'POST', mode:'no-cors', body:JSON.stringify(data)});
+            location.reload();
+        };
+
+        function showSection(id) {
+            document.querySelectorAll('section').forEach(s => s.style.display = 'none');
+            document.getElementById(id).style.display = 'block';
+            if(calendar) { calendar.render(); calendar.updateSize(); }
+        }
+
+        function filterOrders(v) {
+            const val = v.toLowerCase();
+            document.querySelectorAll('.order-item').forEach(el => el.style.display = el.getAttribute('data-search').toLowerCase().includes(val) ? 'block' : 'none');
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
