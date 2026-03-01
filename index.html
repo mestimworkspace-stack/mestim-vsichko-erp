@@ -3,89 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mestim Vsichko ERP - Security Pro</title>
+    <title>Местим Всичко ERP - Pro v9</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
     <style>
         body { font-family: 'Segoe UI', sans-serif; background: #f4f7f6; margin: 0; }
-        .sidebar { height: 100vh; background: #1a3c5a; color: white; position: fixed; width: 250px; z-index: 1000; transition: 0.3s; }
+        .sidebar { height: 100vh; background: #1a3c5a; color: white; position: fixed; width: 250px; z-index: 1000; }
         .sidebar a { color: white; text-decoration: none; padding: 15px 25px; display: block; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.05); }
         .sidebar a:hover { background: #244d73; }
         .content { margin-left: 250px; padding: 30px; min-height: 100vh; }
-        #calendar { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); min-height: 700px; }
+        #calendar { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); min-height: 700px; }
         .card { border: none; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        #loginScreen { height: 100vh; display: flex; align-items: center; justify-content: center; background: white; position: fixed; width: 100%; top:0; left:0; z-index: 9999; }
-        .online-dot { height: 10px; width: 10px; background-color: #2ecc71; border-radius: 50%; display: inline-block; margin-right: 5px; }
-        #loader { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.8); display:none; align-items:center; justify-content:center; z-index:10000; flex-direction:column; }
+        .online-dot { height: 10px; width: 10px; background-color: #2ecc71; border-radius: 50%; display: inline-block; margin-right: 5px; box-shadow: 0 0 5px #2ecc71; }
+        #loginScreen { height: 100vh; display: flex; align-items: center; justify-content: center; background: #1a3c5a; position: fixed; width: 100%; top:0; left:0; z-index: 9999; }
+        #loader { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.9); display:none; align-items:center; justify-content:center; z-index:10000; flex-direction:column; }
+        
+        /* КОРЕКЦИЯ ЗА РЪЧИЧКАТА */
+        .fc-event, .fc-daygrid-event, .fc-timegrid-event { cursor: pointer !important; }
+        
+        .team-badge { background: #eef2f7; color: #1a3c5a; padding: 2px 8px; border-radius: 10px; font-size: 0.7rem; margin: 1px; display: inline-block; border: 1px solid #ddd; }
     </style>
 </head>
 <body>
 
-    <div id="loader"><i class="fas fa-spinner fa-spin fa-3x text-primary mb-3"></i><span>Обработка...</span></div>
+    <div id="loader"><i class="fas fa-spinner fa-spin fa-3x text-primary mb-3"></i><span class="fw-bold">Синхронизиране...</span></div>
 
-    <!-- LOGIN SCREEN -->
     <div id="loginScreen">
-        <div class="text-center p-4 shadow rounded-4 bg-white" style="max-width: 400px; width: 90%;">
-            <i class="fas fa-shield-alt fa-3x text-primary mb-3"></i>
-            <h3 class="fw-bold mb-4">Mestim ERP Login</h3>
+        <div class="text-center p-5 shadow-lg rounded-4 bg-white" style="max-width: 400px; width: 90%;">
+            <i class="fas fa-truck-loading fa-3x text-primary mb-3"></i>
+            <h3 class="fw-bold mb-4">Вход в ERP</h3>
             <input type="email" id="logEmail" class="form-control mb-3 py-2" placeholder="Имейл">
             <input type="password" id="logPass" class="form-control mb-4 py-2" placeholder="Парола">
-            <button class="btn btn-primary w-100 py-2 fw-bold" onclick="tryLogin()">ВЛИЗАНЕ</button>
+            <button class="btn btn-primary w-100 py-2 fw-bold shadow" onclick="tryLogin()">ВЛИЗАНЕ</button>
         </div>
     </div>
 
-    <!-- MAIN APP -->
     <div id="mainApp" style="display:none;">
         <div class="sidebar">
-            <div class="p-4 text-center text-white"><h4 class="fw-bold m-0">МЕСТИМ ВСИЧКО</h4><small id="userRoleBadge" class="badge bg-primary"></small></div>
+            <div class="p-4 text-center text-white"><h4 class="fw-bold m-0">МЕСТИМ ВСИЧКО</h4><small id="userRoleBadge" class="badge bg-success mt-2"></small></div>
             <a onclick="showSection('dashboard')"><i class="fas fa-calendar-alt me-2"></i> График</a>
             <a onclick="showSection('orders-sec')"><i class="fas fa-truck me-2"></i> Поръчки</a>
             <a onclick="showSection('clients-sec')"><i class="fas fa-users me-2"></i> Клиенти</a>
             <a onclick="showSection('emps-sec')"><i class="fas fa-user-friends me-2"></i> Екип</a>
             <a onclick="showSection('payroll-sec')" id="link-payroll"><i class="fas fa-euro-sign me-2"></i> Заплати</a>
-            <a onclick="showSection('settings-sec')" id="link-settings"><i class="fas fa-cog me-2"></i> Настройки</a>
             <a onclick="logout()" class="text-danger mt-5"><i class="fas fa-sign-out-alt me-2"></i> Изход</a>
         </div>
 
         <div class="content">
-            <!-- CALENDAR -->
             <section id="dashboard">
-                <div class="d-flex justify-content-between mb-4"><h2>Работен График</h2><button class="btn btn-success px-4 rounded-pill shadow-sm" onclick="openOrderModal()">+ НОВА ПОРЪЧКА</button></div>
+                <div class="d-flex justify-content-between mb-4"><h2>Календар</h2><button class="btn btn-success px-4 rounded-pill" onclick="openOrderModal()">+ НОВА ПОРЪЧКА</button></div>
                 <div id="calendar"></div>
             </section>
 
-            <!-- COMPACT ORDERS TABLE -->
             <section id="orders-sec" style="display:none;">
-                <div class="d-flex justify-content-between mb-4"><h2>Всички Поръчки</h2><input type="text" class="form-control w-50" placeholder="Филтър..." onkeyup="filterTable('orderTable', this.value)"></div>
+                <div class="d-flex justify-content-between mb-4"><h2>Всички Поръчки</h2><input type="text" class="form-control w-50 shadow-sm" placeholder="Търси..." onkeyup="filterTable('orderTable', this.value)"></div>
                 <div class="card p-3 shadow-sm"><table class="table table-hover" id="orderTable"><thead><tr><th>Дата</th><th>Клиент</th><th>Услуга</th><th>Адрес</th><th>Действие</th></tr></thead><tbody id="orderListBody"></tbody></table></div>
             </section>
 
-            <!-- CLIENTS WITH FILTER -->
             <section id="clients-sec" style="display:none;">
-                <div class="d-flex justify-content-between mb-4"><h2>База Клиенти</h2><div class="d-flex w-75"><input type="text" class="form-control me-2" placeholder="Търси по име/тел..." onkeyup="filterTable('clientTable', this.value)"><button class="btn btn-primary" onclick="openClientModal()">+ НОВ</button></div></div>
+                <div class="d-flex justify-content-between mb-4"><h2>База Клиенти</h2><div class="d-flex w-75"><input type="text" class="form-control me-2" placeholder="Търси име/тел..." onkeyup="filterTable('clientTable', this.value)"><button class="btn btn-primary" onclick="openClientModal()">+ НОВ КЛИЕНТ</button></div></div>
                 <div class="card p-3 shadow-sm"><table class="table" id="clientTable"><thead><tr><th>Име</th><th>Телефон</th><th>Адрес</th><th>Действие</th></tr></thead><tbody id="clientListBody"></tbody></table></div>
             </section>
 
-            <!-- SETTINGS / ACCESS CONTROL -->
-            <section id="settings-sec" style="display:none;">
-                <h2 class="mb-4">Управление на достъпа</h2>
-                <div class="card p-4">
-                    <h5>Служители и Пароли</h5>
-                    <table class="table"><thead><tr><th>Име</th><th>Роля</th><th>Парола</th><th>Действие</th></tr></thead><tbody id="settingsEmpBody"></tbody></table>
-                </div>
+            <section id="emps-sec" style="display:none;">
+                <div class="d-flex justify-content-between mb-4"><h2>Екип статус</h2><button class="btn btn-primary" onclick="openEmpModal()">+ НОВ СЛУЖИТЕЛ</button></div>
+                <div id="empStatusList" class="row"></div>
             </section>
-            
-            <section id="emps-sec" style="display:none;"><h2>Екип статус</h2><div id="empStatusList" class="row"></div></section>
-            <section id="payroll-sec" style="display:none;"><h2>Дължими Заплати</h2><div class="card p-3"><table class="table"><thead><tr><th>Служител</th><th>Часове</th><th>Сума</th><th>Действие</th></tr></thead><tbody id="payrollTableBody"></tbody></table></div></section>
+
+            <section id="payroll-sec" style="display:none;"><h2>Заплати</h2><div class="card p-3"><table class="table"><thead><tr><th>Служител</th><th>Неплатени часове</th><th>Сума</th><th>Действие</th></tr></thead><tbody id="payrollTableBody"></tbody></table></div></section>
         </div>
     </div>
 
-    <!-- MODALS (Orders, Clients, Emps) -->
-    <div class="modal fade" id="orderModal" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content p-4 shadow-lg"><form id="orderForm"><input type="hidden" name="ID_Order" id="o_id"><h4>Детайли на поръчка</h4><div class="row mb-3"><div class="col-md-6"><label>Клиент</label><input list="clientData" id="o_client" class="form-control" required><datalist id="clientData"></datalist></div><div class="col-md-6"><label>Услуга</label><select name="Service" id="o_service" class="form-select"></select></div></div><div class="row mb-3"><div class="col-md-4"><label>Дата</label><input type="date" name="Date" id="o_date" class="form-control" required></div><div class="col-md-4"><label>Начало</label><input type="time" name="TimeStart" id="o_start" class="form-control" required></div><div class="col-md-4"><label>Край</label><input type="time" name="TimeEnd" id="o_end" class="form-control"></div></div><input type="text" name="AddrStart" id="o_addr1" class="form-control mb-2" placeholder="ОТ Адрес" required><input type="text" name="AddrEnd" id="o_addr2" class="form-control mb-3" placeholder="ДО Адрес" required><div class="card p-3 bg-light mb-3"><h6>Екип:</h6><div id="teamPick" class="row"></div></div><textarea name="Desc" id="o_desc" class="form-control mb-3" placeholder="Описание..."></textarea><button type="submit" class="btn btn-success w-100 py-2">ЗАПАЗИ</button></form></div></div></div>
-    <div class="modal fade" id="clientModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content p-4"><form id="clientForm"><input type="hidden" name="ID_Client" id="c_id"><h5>Клиент</h5><input type="text" name="Name" id="c_name" class="form-control mb-2" placeholder="Име" required><input type="text" name="Phone" id="c_phone" class="form-control mb-2" placeholder="Телефон" required><input type="text" name="Address" id="c_addr" class="form-control mb-2" placeholder="Адрес"><textarea name="Notes" id="c_notes" class="form-control mb-2" placeholder="Бележки"></textarea><button type="submit" class="btn btn-primary w-100">Запази</button></form></div></div></div>
+    <!-- MODALS -->
+    <div class="modal fade" id="orderModal" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content p-4 shadow-lg"><form id="orderForm"><input type="hidden" name="ID_Order" id="o_id"><h4>Поръчка</h4><div class="row mb-3"><div class="col-md-6"><label>Клиент</label><input list="clientData" id="o_client" class="form-control" required><datalist id="clientData"></datalist></div><div class="col-md-6"><label>Услуга</label><select name="Service" id="o_service" class="form-select"></select></div></div><div class="row mb-3"><div class="col-md-4"><label>Дата</label><input type="date" name="Date" id="o_date" class="form-control" required></div><div class="col-md-4"><label>Начало</label><input type="time" name="TimeStart" id="o_start" class="form-control" required></div><div class="col-md-4"><label>Край</label><input type="time" name="TimeEnd" id="o_end" class="form-control"></div></div><input type="text" name="AddrStart" id="o_addr1" class="form-control mb-2" placeholder="ОТ Адрес" required><input type="text" name="AddrEnd" id="o_addr2" class="form-control mb-3" placeholder="ДО Адрес" required><div class="card p-3 bg-light mb-3"><h6>Екип:</h6><div id="teamPick" class="row"></div></div><textarea name="Desc" id="o_desc" class="form-control mb-3" placeholder="Бележки..."></textarea><button type="submit" class="btn btn-success w-100 py-2 fw-bold">ЗАПАЗИ ПОРЪЧКА</button></form></div></div></div>
+    
+    <div class="modal fade" id="empModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content p-4 shadow-lg"><form id="empForm"><input type="hidden" name="ID_Emp" id="e_id"><h4>Служител</h4><input type="text" name="Name" id="e_name" class="form-control mb-2" placeholder="Име" required><input type="email" name="Email" id="e_email" class="form-control mb-2" placeholder="Имейл" required><input type="text" name="Phone" id="e_phone" class="form-control mb-2" placeholder="Телефон"><div class="row mb-2"><div class="col"><input type="number" name="Rate2h" id="e_r1" class="form-control" placeholder="Фикс 2ч"></div><div class="col"><input type="number" step="0.01" name="RateMin" id="e_r2" class="form-control" placeholder="Мин ставка"></div></div><div class="row mb-3"><div class="col"><label>Парола</label><input type="text" name="Password" id="e_pass" class="form-control" required></div><div class="col"><label>Роля</label><select name="Role" id="e_role" class="form-select"><option value="Employee">Служител</option><option value="Manager">Мениджър</option><option value="Admin">Админ</option></select></div></div><button type="submit" class="btn btn-primary w-100 py-2">ЗАПАЗИ СЛУЖИТЕЛ</button></form></div></div></div>
 
-    <!-- SCRIPTS -->
+    <div class="modal fade" id="clientModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content p-4 shadow-lg"><form id="clientForm"><input type="hidden" name="ID_Client" id="c_id"><h4>Клиент</h4><input type="text" name="Name" id="c_name" class="form-control mb-2" placeholder="Име" required><input type="text" name="Phone" id="c_phone" class="form-control mb-2" placeholder="Телефон" required><input type="text" name="Address" id="c_addr" class="form-control mb-2" placeholder="Адрес"><textarea name="Notes" id="c_notes" class="form-control mb-3" placeholder="Бележки"></textarea><button type="submit" class="btn btn-primary w-100 py-2">ЗАПАЗИ КЛИЕНТ</button></form></div></div></div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales/bg.js"></script>
@@ -96,20 +92,18 @@
         let appData = {};
         let calendar;
 
-        // LOGIN SYSTEM
         async function tryLogin() {
             const email = document.getElementById('logEmail').value;
             const pass = document.getElementById('logPass').value;
+            if(!email || !pass) return;
             toggleLoader(true);
             try {
                 const resp = await fetch(`${API_URL}?email=${email}&pass=${pass}`);
                 const data = await resp.json();
-                if(data.error) throw new Error(data.error);
-                
+                if(data.error) throw new Error();
                 appData = data;
                 localStorage.setItem('mestim_email', email);
                 localStorage.setItem('mestim_pass', pass);
-                
                 renderAll();
                 document.getElementById('loginScreen').style.display = 'none';
                 document.getElementById('mainApp').style.display = 'block';
@@ -131,26 +125,24 @@
 
         function renderAll() {
             document.getElementById('userRoleBadge').innerText = appData.user.Role;
-            if(appData.user.Role !== "Admin") {
-                document.getElementById('link-settings').style.display = 'none';
-                document.getElementById('link-payroll').style.display = 'none';
-            }
-
-            // Calendar
+            
+            // CALENDAR
+            const el = document.getElementById('calendar');
             if (calendar) calendar.destroy();
-            calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
+            calendar = new FullCalendar.Calendar(el, {
                 initialView: 'dayGridMonth', locale: 'bg',
                 headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek,timeGridDay' },
                 events: appData.orders.map(o => {
                     const client = appData.clients.find(c => String(c.Name).trim() === String(o.Client_ID).trim());
                     const phone = client ? client.Phone : '---';
-                    return { title: `${o.Time_Start_Plan} | ${o.Client_ID}`, start: `${o.Date}T${o.Time_Start_Plan}`, extendedProps: { ...o, phone } };
+                    const team = appData.assignments.filter(a => String(a.Order_ID) === String(o.ID_Order)).map(a => appData.employees.find(e => String(e.ID_Emp) === String(a.Emp_ID))?.Name).join(', ');
+                    return { title: `${o.Time_Start_Plan} | ${o.Client_ID}`, start: `${o.Date}T${o.Time_Start_Plan}`, extendedProps: { ...o, phone, team } };
                 }),
                 eventClick: (info) => showOrderDetails(info.event.extendedProps)
             });
             calendar.render();
 
-            // Tables
+            // TABLES
             document.getElementById('orderListBody').innerHTML = appData.orders.sort((a,b) => new Date(b.Date) - new Date(a.Date)).map(o => `
                 <tr><td>${o.Date} ${o.Time_Start_Plan}</td><td><b>${o.Client_ID}</b></td><td>${o.Service}</td><td>${o.Address_Start}</td><td><button class="btn btn-sm btn-outline-primary" onclick='editOrder(${JSON.stringify(o)})'><i class="fas fa-edit"></i></button></td></tr>
             `).join('');
@@ -158,29 +150,32 @@
             document.getElementById('clientListBody').innerHTML = appData.clients.map(c => `<tr><td>${c.Name}</td><td>${c.Phone}</td><td>${c.Address_Main}</td><td><button class="btn btn-sm btn-outline-primary" onclick='editClient(${JSON.stringify(c)})'><i class="fas fa-edit"></i></button></td></tr>`).join('');
             
             document.getElementById('empStatusList').innerHTML = appData.employees.map(e => `
-                <div class="col-md-4 mb-2"><div class="card p-3 text-center">
-                    <div class="mb-2">${e.isOnline ? '<span class="online-dot shadow-sm"></span> <b>Работи в момента</b>' : '<small class="text-muted">Офлайн</small>'}</div>
-                    <h5 class="m-0">${e.Name}</h5><small>${e.Email}</small>
+                <div class="col-md-4 mb-3"><div class="card p-3 text-center border-0 shadow-sm h-100">
+                    <div class="mb-2">${e.isOnline ? '<span class="online-dot"></span> <b>РАБОТИ</b>' : '<small class="text-muted">Офлайн</small>'}</div>
+                    <h5 class="m-0 fw-bold">${e.Name}</h5><small class="text-muted d-block mb-2">${e.Email}</small>
+                    <button class="btn btn-sm btn-light border w-100" onclick='editEmp(${JSON.stringify(e)})'><i class="fas fa-user-edit me-1"></i> Редакция</button>
                 </div></div>
             `).join('');
 
             document.getElementById('payrollTableBody').innerHTML = appData.employees.map(e => `<tr><td>${e.Name}</td><td>${e.Total_Hours} ч.</td><td>${e.Total_Unpaid_Eur} €</td><td><button class="btn btn-sm btn-success">Плати</button></td></tr>`).join('');
-
-            document.getElementById('settingsEmpBody').innerHTML = appData.employees.map(e => `
-                <tr><td>${e.Name}</td><td>${e.Role}</td><td><code>${e.Password}</code></td><td><button class="btn btn-sm btn-light border">Промени</button></td></tr>
-            `).join('');
-
+            
+            // FORM DROPDOWNS
             document.getElementById('clientData').innerHTML = appData.clients.map(c => `<option value="${c.Name}"></option>`).join('');
             document.getElementById('o_service').innerHTML = appData.services.map(s => `<option value="${s.trim()}">${s.trim()}</option>`).join('');
-            document.getElementById('teamPick').innerHTML = appData.employees.map(e => `<div class="col-4 small"><input type="checkbox" class="team-chk" value="${e.ID_Emp}" id="t_${e.ID_Emp}"> <label for="t_${e.ID_Emp}">${e.Name}</label></div>`).join('');
+            document.getElementById('teamPick').innerHTML = appData.employees.map(e => `<div class="col-4 small mb-1"><input type="checkbox" class="team-chk" value="${e.ID_Emp}" id="t_${e.ID_Emp}"> <label for="t_${e.ID_Emp}">${e.Name}</label></div>`).join('');
         }
 
         function showOrderDetails(o) {
             const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(o.Address_Start)}`;
             Swal.fire({
-                title: `${o.Service} - #${o.ID_Order}`,
-                html: `<div class="text-start"><b>Клиент:</b> ${o.Client_ID}<br><b>Тел:</b> <a href="tel:${o.phone}">${o.phone}</a><br><b>Адрес:</b> <a href="${mapsUrl}" target="_blank">${o.Address_Start}</a><br><b>Описание:</b> ${o.Description}</div>`,
-                confirmButtonText: 'Редактирай', showCancelButton: true
+                title: `<span class="text-primary">${o.Service}</span>`,
+                html: `<div class="text-start border-top pt-3">
+                    <p><b>Клиент:</b> ${o.Client_ID}<br><b>Тел:</b> <a href="tel:${o.phone}">${o.phone}</a></p>
+                    <p><b>Адрес:</b> <a href="${mapsUrl}" target="_blank" class="text-decoration-none">${o.Address_Start} <i class="fas fa-external-link-alt ms-1"></i></a></p>
+                    <p><b>Екип:</b> ${o.team || 'Няма назначен'}</p>
+                    <p class="small bg-light p-2 rounded"><b>Описание:</b> ${o.Description || '-'}</p>
+                </div>`,
+                confirmButtonText: 'Редактирай поръчка', showCancelButton: true, cancelButtonText: 'Затвори'
             }).then(r => { if(r.isConfirmed) editOrder(o); });
         }
 
@@ -200,8 +195,29 @@
             new bootstrap.Modal(document.getElementById('orderModal')).show();
         }
 
+        function editEmp(e) {
+            document.getElementById('e_id').value = e.ID_Emp;
+            document.getElementById('e_name').value = e.Name;
+            document.getElementById('e_email').value = e.Email;
+            document.getElementById('e_phone').value = e.Phone;
+            document.getElementById('e_r1').value = e.Rate_First_2h_Eur;
+            document.getElementById('e_r2').value = e.Rate_Per_Min_Eur;
+            document.getElementById('e_pass').value = e.Password;
+            document.getElementById('e_role').value = e.Role || "Employee";
+            new bootstrap.Modal(document.getElementById('empModal')).show();
+        }
+
+        function editClient(c) {
+            document.getElementById('c_id').value = c.ID_Client;
+            document.getElementById('c_name').value = c.Name;
+            document.getElementById('c_phone').value = c.Phone;
+            document.getElementById('c_addr').value = c.Address_Main;
+            new bootstrap.Modal(document.getElementById('clientModal')).show();
+        }
+
         document.getElementById('orderForm').onsubmit = (e) => { e.preventDefault(); const data = Object.fromEntries(new FormData(e.target)); data.action = data.ID_Order ? "editOrder" : "addOrder"; data.ClientName = document.getElementById('o_client').value; data.TeamIds = Array.from(document.querySelectorAll('.team-chk:checked')).map(c => c.value); send(data); };
         document.getElementById('clientForm').onsubmit = (e) => { e.preventDefault(); const data = Object.fromEntries(new FormData(e.target)); data.action = data.ID_Client ? "editClient" : "addClient"; send(data); };
+        document.getElementById('empForm').onsubmit = (e) => { e.preventDefault(); const data = Object.fromEntries(new FormData(e.target)); data.action = data.ID_Emp ? "editEmployee" : "addEmployee"; send(data); };
 
         async function send(data) {
             toggleLoader(true);
@@ -214,7 +230,7 @@
         function toggleLoader(show) { document.getElementById('loader').style.display = show ? 'flex' : 'none'; }
         function openOrderModal() { document.getElementById('orderForm').reset(); document.getElementById('o_id').value = ""; new bootstrap.Modal(document.getElementById('orderModal')).show(); }
         function openClientModal() { document.getElementById('clientForm').reset(); document.getElementById('c_id').value = ""; new bootstrap.Modal(document.getElementById('clientModal')).show(); }
-
+        function openEmpModal() { document.getElementById('empForm').reset(); document.getElementById('e_id').value = ""; new bootstrap.Modal(document.getElementById('empModal')).show(); }
     </script>
 </body>
 </html>
