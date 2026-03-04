@@ -206,50 +206,124 @@
 
         function renderAll() {
             const isAdmin = appData.user.Role === "Admin";
+            const isManager = appData.user.Role === "Manager";
+            
             document.getElementById('userRoleBadge').innerText = appData.user.Role;
             
+            // 1. УПРАВЛЕНИЕ НА ДОСТЪПА (ВИДИМОСТ)
             if(!isAdmin) {
                 document.getElementById('link-settings').style.display = 'none';
                 document.getElementById('link-payroll').style.display = 'none';
                 document.getElementById('link-resources').style.display = 'none';
+                // Скриваме полетата за парола и роля при редакция на служител
                 document.querySelectorAll('.admin-only-fields').forEach(f => f.style.display = 'none');
+                // Скриваме бутоните за изтриване
                 document.querySelectorAll('.btn-admin-only').forEach(b => b.style.display = 'none');
             } else {
+                document.getElementById('link-settings').style.display = 'block';
+                document.getElementById('link-payroll').style.display = 'block';
+                document.getElementById('link-resources').style.display = 'block';
+                document.querySelectorAll('.admin-only-fields').forEach(f => f.style.display = 'block');
                 document.querySelectorAll('.btn-admin-only').forEach(b => b.style.display = 'block');
             }
 
-            // CALENDAR (TIME BLOCKS)
+            // 2. КАЛЕНДАР (TIME BLOCKS)
             const el = document.getElementById('calendar');
             if (calendar) calendar.destroy();
             calendar = new FullCalendar.Calendar(el, {
-                initialView: 'dayGridMonth', locale: 'bg',
+                initialView: 'dayGridMonth', 
+                locale: 'bg',
                 headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek,timeGridDay' },
                 events: appData.orders.map(o => ({
                     title: `${o.Service} | ${o.Client_ID}`,
                     start: `${o.Date}T${o.Time_Start_Plan}`,
                     end: o.Time_End_Plan ? `${o.Date}T${o.Time_End_Plan}` : null,
                     color: SERVICE_COLORS[o.Service] || '#1a3c5a',
-                    allDay: false, extendedProps: o
+                    allDay: false, 
+                    extendedProps: o
                 })),
                 eventClick: (i) => showOrderDetails(i.event.extendedProps.ID_Order)
             });
             calendar.render();
 
-            // TABLES
-            document.getElementById('orderListBody').innerHTML = appData.orders.sort((a,b) => new Date(b.Date) - new Date(a.Date)).map(o => `<tr><td>${o.Date} ${o.Time_Start_Plan}</td><td><b>${o.Client_ID}</b></td><td><span class="badge" style="background:${SERVICE_COLORS[o.Service]}">${o.Service}</span></td><td>${o.Address_Start}</td><td><button class="btn btn-sm btn-outline-primary" onclick="prepEdit('Order','${o.ID_Order}')"><i class="fas fa-edit"></i></button></td></tr>`).join('');
-            document.getElementById('clientListBody').innerHTML = appData.clients.map(c => `<tr><td>${c.Name}</td><td>${c.Phone}</td><td>${c.Address_Main}</td><td><button class="btn btn-sm btn-outline-primary" onclick="prepEdit('Client','${c.ID_Client}')"><i class="fas fa-edit"></i></button></td></tr>`).join('');
-            document.getElementById('empStatusList').innerHTML = appData.employees.map(e => `<div class="col-md-4 mb-3"><div class="card p-3 text-center border-0 shadow-sm h-100"><div>${e.isOnline ? '<span class="online-dot"></span> <b>РАБОТИ</b>' : '<small class="text-muted">Офлайн</small>'}</div><h5 class="m-0 fw-bold">${e.Name}</h5><small class="text-muted">${e.Email}</small><button class="btn btn-sm btn-light border mt-2" onclick="prepEdit('Employee','${e.ID_Emp}')"><i class="fas fa-edit"></i></button></div></div>`).join('');
+            // 3. ТАБЛИЦА ПОРЪЧКИ
+            document.getElementById('orderListBody').innerHTML = appData.orders.sort((a,b) => new Date(b.Date) - new Date(a.Date)).map(o => `
+                <tr>
+                    <td>${o.Date} ${o.Time_Start_Plan}</td>
+                    <td><b>${o.Client_ID}</b></td>
+                    <td><span class="badge" style="background:${SERVICE_COLORS[o.Service]}">${o.Service}</span></td>
+                    <td>${o.Address_Start}</td>
+                    <td><button class="btn btn-sm btn-outline-primary" onclick="prepEdit('Order','${o.ID_Order}')"><i class="fas fa-edit"></i></button></td>
+                </tr>
+            `).join('');
+
+            // 4. ТАБЛИЦА КЛИЕНТИ
+            document.getElementById('clientListBody').innerHTML = appData.clients.map(c => `
+                <tr>
+                    <td>${c.Name}</td>
+                    <td>${c.Phone}</td>
+                    <td>${c.Address_Main}</td>
+                    <td><button class="btn btn-sm btn-outline-primary" onclick="prepEdit('Client','${c.ID_Client}')"><i class="fas fa-edit"></i></button></td>
+                </tr>
+            `).join('');
+
+            // 5. ЕКИП СТАТУС (ОНЛАЙН/ОФЛАЙН)
+            document.getElementById('empStatusList').innerHTML = appData.employees.map(e => `
+                <div class="col-md-4 mb-3">
+                    <div class="card p-3 text-center border-0 shadow-sm h-100">
+                        <div class="mb-2">${e.isOnline ? '<span class="online-dot"></span> <b>РАБОТИ</b>' : '<small class="text-muted">Офлайн</small>'}</div>
+                        <h5 class="m-0 fw-bold">${e.Name}</h5>
+                        <small class="text-muted">${e.Email}</small>
+                        <button class="btn btn-sm btn-light border mt-2" onclick="prepEdit('Employee','${e.ID_Emp}')"><i class="fas fa-edit"></i></button>
+                    </div>
+                </div>
+            `).join('');
             
+            // 6. ТАБЛИЦА ЗАПЛАТИ (ФИКСИРАНО UNDEFINED)
             if(isAdmin) {
-                document.getElementById('payrollTableBody').innerHTML = appData.employees.map(e => `<tr><td>${e.Name}</td><td>${e.Total_Hours} ч.</td><td>${e.Total_Unpaid_Eur} €</td><td><button class="btn btn-sm btn-success">Плати</button></td></tr>`).join('');
-                document.getElementById('settingsEmpBody').innerHTML = appData.employees.map(e => `<tr><td>${e.Name}</td><td>${e.Role}</td><td><code>${e.Password}</code></td><td><button class="btn btn-sm btn-light border" onclick="prepEdit('Employee','${e.ID_Emp}')"><i class="fas fa-edit"></i></button></td></tr>`).join('');
-                const resBase = `<div class="col-md-6 mb-3"><a href="https://docs.google.com/spreadsheets/d/1eYld8WuswC1gZMjl81JWecw7XyC0p1mGihSpBViZahg/edit" target="_blank" class="card p-4 resource-card text-center text-decoration-none shadow-sm"><i class="fas fa-table fa-2x mb-2 text-success"></i><h5>База Данни (Sheets)</h5></a></div><div class="col-md-6 mb-3"><a href="https://mestimworkspace-stack.github.io/mestim-vsichko-team/" target="_blank" class="card p-4 resource-card text-center text-decoration-none shadow-sm"><i class="fas fa-mobile-alt fa-2x mb-2 text-primary"></i><h5>Екип Панел</h5></a></div>`;
-                document.getElementById('resourceList').innerHTML = resBase + (appData.resources || []).map(r => `<div class="col-md-6 mb-3"><div class="card p-4 resource-card" onclick="prepEdit('Resource','${r.ID_Resource}')"><h5>${r.Title}</h5><p class="small text-muted">${r.Notes || ''}</p></div></div>`).join('');
+                document.getElementById('payrollTableBody').innerHTML = appData.employees.map(e => `
+                    <tr>
+                        <td><b>${e.Name}</b></td>
+                        <td>${e.Total_Hours || '0.0'} ч.</td>
+                        <td class="text-success fw-bold">${e.Total_Unpaid_Eur || '0.00'} €</td>
+                        <td><button class="btn btn-sm btn-success px-3 rounded-pill" onclick="Swal.fire('Плащане','Използвайте Google Sheet за маркиране като платени','info')">Плати</button></td>
+                    </tr>
+                `).join('');
+
+                // 7. НАСТРОЙКИ (ПАРОЛИ)
+                document.getElementById('settingsEmpBody').innerHTML = appData.employees.map(e => `
+                    <tr>
+                        <td>${e.Name}</td>
+                        <td>${e.Role}</td>
+                        <td><code>${e.Password || '****'}</code></td>
+                        <td><button class="btn btn-sm btn-light border" onclick="prepEdit('Employee','${e.ID_Emp}')"><i class="fas fa-edit"></i></button></td>
+                    </tr>
+                `).join('');
+
+                // 8. РЕСУРСИ
+                const resBase = `
+                    <div class="col-md-6 mb-3"><a href="https://docs.google.com/spreadsheets/d/1eYld8WuswC1gZMjl81JWecw7XyC0p1mGihSpBViZahg/edit" target="_blank" class="card p-4 resource-card text-center text-decoration-none shadow-sm"><i class="fas fa-table fa-2x mb-2 text-success"></i><h5>База Данни (Sheets)</h5></a></div>
+                    <div class="col-md-6 mb-3"><a href="https://mestimworkspace-stack.github.io/mestim-vsichko-team/" target="_blank" class="card p-4 resource-card text-center text-decoration-none shadow-sm"><i class="fas fa-mobile-alt fa-2x mb-2 text-primary"></i><h5>Екип Панел</h5></a></div>
+                `;
+                document.getElementById('resourceList').innerHTML = resBase + (appData.resources || []).map(r => `
+                    <div class="col-md-6 mb-3">
+                        <div class="card p-4 resource-card" onclick="prepEdit('Resource','${r.ID_Resource}')">
+                            <h5 class="fw-bold text-primary">${r.Title}</h5>
+                            <p class="small text-muted mb-0">${r.Notes || ''}</p>
+                        </div>
+                    </div>
+                `).join('');
             }
 
+            // 9. ДАННИ ЗА ФОРМИТЕ
             document.getElementById('clientData').innerHTML = appData.clients.map(c => `<option value="${c.Name}"></option>`).join('');
             document.getElementById('o_service').innerHTML = appData.services.map(s => `<option value="${s.trim()}">${s.trim()}</option>`).join('');
-            document.getElementById('teamPick').innerHTML = appData.employees.map(e => `<div class="col-4 small"><input type="checkbox" class="team-chk" value="${e.ID_Emp}" id="t_${e.ID_Emp}"> <label for="t_${e.ID_Emp}">${e.Name}</label></div>`).join('');
+            document.getElementById('teamPick').innerHTML = appData.employees.map(e => `
+                <div class="col-4 small">
+                    <input type="checkbox" class="team-chk" value="${e.ID_Emp}" id="t_${e.ID_Emp}"> 
+                    <label for="t_${e.ID_Emp}">${e.Name}</label>
+                </div>
+            `).join('');
         }
 
         function showOrderDetails(id) {
