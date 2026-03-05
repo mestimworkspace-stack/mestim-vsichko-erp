@@ -3,41 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Местим всичко ERP - Admin Pro</title>
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@600;700&display=swap" rel="stylesheet">
-    <!-- CSS -->
+    <title>Местим всичко ERP - Professional</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; background: #f4f7f6; margin: 0; color: #334155; }
-        h1, h2, h3, h4, h5, h6, .sidebar, .fw-bold, .btn { font-family: 'Montserrat', sans-serif; letter-spacing: -0.02em; }
-        
-        .sidebar { height: 100vh; background: #1a3c5a; color: white; position: fixed; width: 250px; z-index: 1000; transition: 0.3s; }
-        .sidebar a { color: white; text-decoration: none; padding: 15px 25px; display: block; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.05); transition: 0.2s; }
-        .sidebar a:hover { background: #244d73; padding-left: 30px; }
-        
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f7f6; margin: 0; }
+        .sidebar { height: 100vh; background: #1a3c5a; color: white; position: fixed; width: 250px; z-index: 1000; }
+        .sidebar a { color: white; text-decoration: none; padding: 15px 25px; display: block; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .sidebar a:hover { background: #244d73; }
         .content { margin-left: 250px; padding: 30px; min-height: 100vh; }
-        #calendar { background: white; padding: 20px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); min-height: 750px; border: none; }
-        .card { border: none; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        
-        /* LOGIN SCREEN */
+        #calendar { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); min-height: 750px; }
+        .card { border: none; border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.05); margin-bottom: 20px; }
         #loginScreen { height: 100vh; display: flex; align-items: center; justify-content: center; background: #1a3c5a; position: fixed; width: 100%; top:0; left:0; z-index: 9999; }
-        #loader { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.95); display:none; align-items:center; justify-content:center; z-index:10000; flex-direction:column; }
-        
+        #loader { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.9); display:none; align-items:center; justify-content:center; z-index:10000; flex-direction:column; }
         /* КОРЕКЦИЯ ЗА РЪЧИЧКАТА */
-        .fc-event, .fc-daygrid-event, .fc-timegrid-event, .fc-list-event { 
-            cursor: pointer !important; 
-            border: none !important;
-            padding: 2px 4px !important;
-            border-radius: 6px !important;
-        }
-        
-        .online-dot { height: 12px; width: 12px; background-color: #2ecc71; border-radius: 50%; display: inline-block; margin-right: 8px; box-shadow: 0 0 10px rgba(46, 204, 113, 0.5); }
-        .team-badge { background: #f1f5f9; color: #1a3c5a; padding: 4px 10px; border-radius: 8px; font-size: 0.75rem; margin: 2px; display: inline-block; font-weight: 600; border: 1px solid #e2e8f0; }
-        .resource-card { transition: 0.3s; cursor: pointer; border-left: 6px solid #1a3c5a; background: white; border-radius: 12px; height: 100%; }
-        .resource-card:hover { transform: translateY(-5px); box-shadow: 0 12px 25px rgba(0,0,0,0.1); }
+        .fc-event, .fc-daygrid-event, .fc-timegrid-event { cursor: pointer !important; }
+        .online-dot { height: 10px; width: 10px; background-color: #2ecc71; border-radius: 50%; display: inline-block; margin-right: 8px; box-shadow: 0 0 5px #2ecc71; }
+        .team-badge { background: #eef2f7; color: #1a3c5a; padding: 2px 8px; border-radius: 10px; font-size: 0.7rem; margin: 1px; display: inline-block; border: 1px solid #ddd; }
+        .resource-card { transition: 0.3s; cursor: pointer; border-left: 5px solid #1a3c5a; }
+        .resource-card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
     </style>
 </head>
 <body>
@@ -46,10 +31,10 @@
 
     <!-- LOGIN -->
     <div id="loginScreen">
-        <div class="text-center p-5 shadow-lg rounded-4 bg-white" style="max-width: 420px; width: 90%;">
+        <div class="text-center p-5 shadow-lg rounded-4 bg-white" style="max-width: 400px; width: 90%;">
             <i class="fas fa-truck-loading fa-4x text-primary mb-4"></i>
-            <h2 class="fw-bold mb-2 text-dark">Местим всичко</h2>
-            <p class="text-muted mb-4 small fw-bold text-uppercase">ERP АДМИН ПАНЕЛ</p>
+            <h3 class="fw-bold mb-2">Местим всичко</h3>
+            <p class="text-muted mb-4">ERP Администрация</p>
             <input type="email" id="logEmail" class="form-control mb-3 py-3 text-center rounded-pill" placeholder="Имейл">
             <input type="password" id="logPass" class="form-control mb-4 py-3 text-center rounded-pill" placeholder="Парола">
             <button class="btn btn-primary w-100 py-3 fw-bold rounded-pill shadow" onclick="tryLogin()">ВЛИЗАНЕ</button>
@@ -60,105 +45,51 @@
     <!-- MAIN APP -->
     <div id="mainApp" style="display:none;">
         <div class="sidebar">
-            <div class="p-4 text-center text-white">
-                <h4 class="fw-bold m-0" style="font-size: 1rem;">МЕСТИМ ВСИЧКО</h4>
-                <small id="userRoleBadge" class="badge bg-success mt-2 px-3"></small>
-            </div>
-            <a onclick="showSection('dashboard')"><i class="fas fa-calendar-alt me-3"></i> График</a>
-            <a onclick="showSection('orders-sec')"><i class="fas fa-truck me-3"></i> Поръчки</a>
-            <a onclick="showSection('clients-sec')"><i class="fas fa-users me-3"></i> Клиенти</a>
-            <a onclick="showSection('emps-sec')"><i class="fas fa-user-friends me-3"></i> Екип</a>
-            <a onclick="showSection('payroll-sec')" id="link-payroll"><i class="fas fa-euro-sign me-3"></i> Заплати</a>
-            <a onclick="showSection('resources-sec')" id="link-resources"><i class="fas fa-link me-3"></i> Ресурси</a>
-            <a onclick="logout()" class="text-danger mt-4"><i class="fas fa-sign-out-alt me-3"></i> Изход</a>
+            <div class="p-4 text-center text-white"><h4 class="fw-bold m-0 small text-uppercase">Местим всичко</h4><small id="userRoleBadge" class="badge bg-success mt-2"></small></div>
+            <a onclick="showSection('dashboard')"><i class="fas fa-calendar-alt me-2"></i> График</a>
+            <a onclick="showSection('orders-sec')"><i class="fas fa-truck me-2"></i> Поръчки</a>
+            <a onclick="showSection('clients-sec')"><i class="fas fa-users me-2"></i> Клиенти</a>
+            <a onclick="showSection('emps-sec')"><i class="fas fa-user-friends me-2"></i> Екип</a>
+            <a onclick="showSection('payroll-sec')" id="link-payroll"><i class="fas fa-euro-sign me-2"></i> Заплати</a>
+            <a onclick="showSection('resources-sec')" id="link-resources"><i class="fas fa-link me-2"></i> Ресурси</a>
+            <a onclick="showSection('settings-sec')" id="link-settings"><i class="fas fa-cog me-2"></i> Настройки</a>
+            <a onclick="logout()" class="text-danger mt-4"><i class="fas fa-sign-out-alt me-2"></i> Изход</a>
         </div>
 
         <div class="content">
+            <!-- CALENDAR -->
             <section id="dashboard">
-                <div class="d-flex justify-content-between mb-4">
-                    <h2 class="fw-bold">Работен График</h2>
-                    <button class="btn btn-success rounded-pill px-4 shadow-sm" onclick="openOrderModal()">+ НОВА ПОРЪЧКА</button>
-                </div>
+                <div class="d-flex justify-content-between mb-4"><h2>График на дейностите</h2><button class="btn btn-success rounded-pill px-4 shadow" onclick="openOrderModal()">+ НОВА ПОРЪЧКА</button></div>
                 <div id="calendar"></div>
             </section>
 
-            <!-- PAYROLL -->
-            <section id="payroll-sec" style="display:none;">
-                <h2 class="fw-bold">Заплати и Бонуси</h2>
-                <div class="card p-3 shadow-sm"><table class="table align-middle"><thead><tr><th>Служител</th><th>Часове</th><th>Към плащане</th><th>Действие</th></tr></thead><tbody id="payrollTableBody"></tbody></table></div>
-            </section>
-
-            <!-- RESOURCES -->
+            <!-- RESOURCES (Admin only links + Custom) -->
             <section id="resources-sec" style="display:none;">
-                <div class="d-flex justify-content-between mb-4">
-                    <h2 class="fw-bold">Ресурси</h2>
-                    <button class="btn btn-primary shadow-sm" onclick="openResourceModal()">+ ДОБАВИ БЕЛЕЖКА</button>
-                </div>
+                <div class="d-flex justify-content-between mb-4"><h2>Ресурси</h2><button class="btn btn-primary" onclick="openResourceModal()">+ ДОБАВИ</button></div>
                 <div class="row" id="resourceList"></div>
-            </section>
-
-            <!-- ORDERS TABLE -->
-            <section id="orders-sec" style="display:none;">
-                <div class="d-flex justify-content-between mb-4">
-                    <h2 class="fw-bold">Списък Поръчки</h2>
-                    <input type="text" class="form-control w-50 shadow-sm" placeholder="Търси..." onkeyup="filterTable('orderTable', this.value)">
-                </div>
-                <div class="card p-3 shadow-sm"><table class="table table-hover align-middle" id="orderTable"><thead><tr><th>Дата/Час</th><th>Клиент</th><th>Услуга</th><th>Адрес</th><th>Действие</th></tr></thead><tbody id="orderListBody"></tbody></table></div>
             </section>
 
             <!-- CLIENTS -->
             <section id="clients-sec" style="display:none;">
-                <div class="d-flex justify-content-between mb-4">
-                    <h2 class="fw-bold">База Клиенти</h2>
-                    <div class="d-flex w-75">
-                        <input type="text" class="form-control me-2 shadow-sm" placeholder="Търси..." onkeyup="filterTable('clientTable', this.value)">
-                        <button class="btn btn-primary shadow-sm" onclick="openClientModal()">+ НОВ КЛИЕНТ</button>
-                    </div>
-                </div>
-                <div class="card p-3 shadow-sm"><table class="table align-middle" id="clientTable"><thead><tr><th>Име</th><th>Телефон</th><th>Адрес</th><th>Действие</th></tr></thead><tbody id="clientListBody"></tbody></table></div>
+                <div class="d-flex justify-content-between mb-4"><h2>База Клиенти</h2><div class="d-flex w-75"><input type="text" class="form-control me-2" placeholder="Търси име/тел..." onkeyup="filterTable('clientTable', this.value)"><button class="btn btn-primary" onclick="openClientModal()">+ НОВ</button></div></div>
+                <div class="card p-3 shadow-sm"><table class="table align-middle" id="clientTable"><thead><tr><th>Име</th><th>Телефон</th><th>Адрес</th><th>Действия</th></tr></thead><tbody id="clientListBody"></tbody></table></div>
             </section>
 
-            <!-- EMPS STATUS -->
-            <section id="emps-sec" style="display:none;">
-                <div class="d-flex justify-content-between mb-4">
-                    <h2 class="fw-bold">Екип статус</h2>
-                    <button class="btn btn-primary shadow-sm" onclick="openEmpModal()">+ НОВ СЛУЖИТЕЛ</button>
-                </div>
-                <div id="empStatusList" class="row"></div>
-            </section>
+            <!-- OTHER TABLES (UNCHANGED LOGIC) -->
+            <section id="orders-sec" style="display:none;"><div class="d-flex justify-content-between mb-4"><h2>Поръчки</h2><input type="text" class="form-control w-50 shadow-sm" placeholder="Търси..." onkeyup="filterTable('orderTable', this.value)"></div><div class="card p-3 shadow-sm"><table class="table table-hover" id="orderTable"><thead><tr><th>Дата</th><th>Клиент</th><th>Услуга</th><th>Адрес</th><th>Действие</th></tr></thead><tbody id="orderListBody"></tbody></table></div></section>
+            <section id="emps-sec" style="display:none;"><div class="d-flex justify-content-between mb-4"><h2>Екип статус</h2><button class="btn btn-primary" onclick="openEmpModal()">+ НОВ СЛУЖИТЕЛ</button></div><div id="empStatusList" class="row"></div></section>
+            <section id="payroll-sec" style="display:none;"><h2>Заплати</h2><div class="card p-3"><table class="table"><thead><tr><th>Служител</th><th>Часове</th><th>Сума</th><th>Действие</th></tr></thead><tbody id="payrollTableBody"></tbody></table></div></section>
+            <section id="settings-sec" style="display:none;"><h2>Настройки</h2><div class="card p-4"><h5>Управление на достъпа</h5><table class="table"><thead><tr><th>Име</th><th>Роля</th><th>Парола</th><th>Действие</th></tr></thead><tbody id="settingsEmpBody"></tbody></table></div></section>
         </div>
     </div>
 
     <!-- MODAL ORDER -->
-    <div class="modal fade" id="orderModal" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content p-4 shadow-lg border-0 rounded-4"><form id="orderForm">
-        <input type="hidden" name="ID_Order" id="o_id">
-        <h4 id="o_title" class="fw-bold mb-4 text-primary">Поръчка</h4>
-        <div class="row mb-3">
-            <div class="col-md-6"><label class="small fw-bold">Клиент</label><input list="clientData" id="o_client" class="form-control shadow-sm" required placeholder="Търси..."><datalist id="clientData"></datalist></div>
-            <div class="col-md-6"><label class="small fw-bold">Услуга</label><select name="Service" id="o_service" class="form-select shadow-sm"></select></div>
-        </div>
-        <div class="row mb-3">
-            <div class="col-md-4"><label class="small fw-bold">Дата</label><input type="date" name="Date" id="o_date" class="form-control shadow-sm" required></div>
-            <div class="col-md-4"><label class="small fw-bold">Начало</label><input type="time" name="TimeStart" id="o_start" class="form-control shadow-sm" required></div>
-            <div class="col-md-4"><label class="small fw-bold">Край</label><input type="time" name="TimeEnd" id="o_end" class="form-control shadow-sm"></div>
-        </div>
-        <div class="row mb-3">
-            <div class="col-md-6"><label class="small fw-bold">ОТ Адрес</label><input type="text" name="AddrStart" id="o_addr1" class="form-control shadow-sm" required></div>
-            <div class="col-md-6"><label class="small fw-bold">ДО Адрес</label><input type="text" name="AddrEnd" id="o_addr2" class="form-control shadow-sm" required></div>
-        </div>
-        <div class="card p-3 bg-light mb-3 border-0 shadow-none"><h6>Екип:</h6><div id="teamPick" class="row"></div></div>
-        <div class="mb-3"><label class="small fw-bold mb-1 text-primary">Снимки</label><input type="file" class="form-control mb-2" onchange="uploadPhoto(this)"><input type="hidden" name="Photos" id="o_photos"><div id="photoPreview"></div></div>
-        <textarea name="Desc" id="o_desc" class="form-control mb-3 shadow-sm" placeholder="Бележки..." rows="3"></textarea>
-        <div class="d-flex gap-2">
-            <button type="submit" class="btn btn-primary w-100 py-3 fw-bold rounded-pill">ЗАПАЗИ</button>
-            <button type="button" id="btnDeleteOrder" class="btn btn-outline-danger px-4 rounded-pill btn-admin-only" onclick="deleteItem('Order', document.getElementById('o_id').value)">ИЗТРИЙ</button>
-        </div>
-    </form></div></div></div>
+    <div class="modal fade" id="orderModal" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content p-4 shadow border-0 rounded-4"><form id="orderForm"><input type="hidden" name="ID_Order" id="o_id"><h4>Поръчка</h4><div class="row mb-3"><div class="col-md-6"><label class="small fw-bold">Клиент</label><input list="clientData" id="o_client" class="form-control" required placeholder="Търси..."><datalist id="clientData"></datalist></div><div class="col-md-6"><label class="small fw-bold">Услуга</label><select name="Service" id="o_service" class="form-select"></select></div></div><div class="row mb-3"><div class="col-md-4"><label class="small fw-bold">Дата</label><input type="date" name="Date" id="o_date" class="form-control" required></div><div class="col-md-4"><label class="small fw-bold">Начало</label><input type="time" name="TimeStart" id="o_start" class="form-control" required></div><div class="col-md-4"><label class="small fw-bold">Край</label><input type="time" name="TimeEnd" id="o_end" class="form-control"></div></div><div class="row mb-3"><div class="col-md-6"><label class="small fw-bold">ОТ Адрес</label><input type="text" name="AddrStart" id="o_addr1" class="form-control" required></div><div class="col-md-6"><label class="small fw-bold">ДО Адрес</label><input type="text" name="AddrEnd" id="o_addr2" class="form-control" required></div></div><div class="card p-3 bg-light mb-3 border-0"><h6>Екип:</h6><div id="teamPick" class="row"></div></div><div class="mb-3"><label class="small fw-bold">Снимки</label><input type="file" class="form-control mb-2" onchange="uploadPhoto(this)"><input type="hidden" name="Photos" id="o_photos"><div id="photoPreview"></div></div><textarea name="Desc" id="o_desc" class="form-control mb-3" placeholder="Описание..."></textarea><div class="d-flex gap-2"><button type="submit" class="btn btn-primary w-100 py-2">ЗАПАЗИ</button><button type="button" id="btnDeleteOrder" class="btn btn-outline-danger btn-admin-only" onclick="deleteItem('Order', document.getElementById('o_id').value)">ИЗТРИЙ</button></div></form></div></div></div>
 
-    <!-- OTHER MODALS -->
-    <div class="modal fade" id="clientModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content p-4 border-0 rounded-4 shadow-lg"><form id="clientForm"><input type="hidden" name="ID_Client" id="c_id"><h4 class="fw-bold mb-4">Клиент</h4><input type="text" name="Name" id="c_name" class="form-control mb-2" required placeholder="Име"><input type="text" name="Phone" id="c_phone" class="form-control mb-2" required placeholder="Телефон"><input type="text" name="Address" id="c_addr" class="form-control mb-2" placeholder="Адрес"><textarea name="Notes" id="c_notes" class="form-control mb-3" placeholder="Бележки"></textarea><div class="d-flex gap-2"><button type="submit" class="btn btn-primary w-100">ЗАПАЗИ</button><button type="button" id="btnDeleteClient" class="btn btn-outline-danger px-4 rounded-pill btn-admin-only" onclick="deleteItem('Client', document.getElementById('c_id').value)">ИЗТРИЙ</button></div></form></div></div></div>
-    <div class="modal fade" id="empModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content p-4 border-0 rounded-4 shadow-lg"><form id="empForm"><input type="hidden" name="ID_Emp" id="e_id"><h4 class="fw-bold mb-4">Служител</h4><input type="text" name="Name" id="e_name" class="form-control mb-2" required placeholder="Име"><input type="email" id="e_email" name="Email" class="form-control mb-2" required placeholder="Email"><input type="text" name="Phone" id="e_phone" class="form-control mb-2" placeholder="Телефон"><div class="row mb-3"><div class="col"><input type="number" name="Rate2h" id="e_r1" class="form-control" placeholder="Фикс 2ч"></div><div class="col"><input type="number" step="0.01" name="RateMin" id="e_r2" class="form-control" placeholder="Мин став."></div></div><div class="admin-only-fields border-top pt-3"><div class="row mb-3"><div class="col"><label class="small fw-bold">Парола</label><input type="text" name="Password" id="e_pass" class="form-control"></div><div class="col"><label class="small fw-bold">Роля</label><select name="Role" id="e_role" class="form-select"><option value="Employee">Employee</option><option value="Manager">Manager</option><option value="Admin">Admin</option></select></div></div></div><div class="d-flex gap-2"><button type="submit" class="btn btn-primary w-100">ЗАПАЗИ</button><button type="button" id="btnDeleteEmp" class="btn btn-outline-danger px-4 rounded-pill btn-admin-only" onclick="deleteItem('Employee', document.getElementById('e_id').value)">ИЗТРИЙ</button></div></form></div></div></div>
-    <div class="modal fade" id="resourceModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content p-4 shadow-lg border-0 rounded-4"><form id="resourceForm"><input type="hidden" name="ID_Resource" id="r_id"><h4 class="fw-bold mb-4 text-primary">Ресурс</h4><input type="text" name="Title" id="r_title" class="form-control mb-2" required placeholder="Заглавие"><input type="text" name="Link" id="r_link" class="form-control mb-2" placeholder="Линк (URL)"><textarea name="Notes" id="r_notes" class="form-control mb-3" placeholder="Бележки"></textarea><div class="d-flex gap-2"><button type="submit" class="btn btn-primary w-100">ЗАПАЗИ</button><button type="button" id="btnDeleteRes" class="btn btn-outline-danger px-4 rounded-pill btn-admin-only" onclick="deleteItem('Resource', document.getElementById('r_id').value)">ИЗТРИЙ</button></div></form></div></div></div>
+    <!-- MODALS: CLIENT, EMP, RESOURCE -->
+    <div class="modal fade" id="clientModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content p-4 border-0 rounded-4 shadow"><form id="clientForm"><input type="hidden" name="ID_Client" id="c_id"><h5>Клиент</h5><input type="text" name="Name" id="c_name" class="form-control mb-2" required placeholder="Име"><input type="text" name="Phone" id="c_phone" class="form-control mb-2" required placeholder="Телефон"><input type="text" name="Address" id="c_addr" class="form-control mb-2" placeholder="Адрес"><textarea name="Notes" id="c_notes" class="form-control mb-3" placeholder="Бележки"></textarea><div class="d-flex gap-2"><button type="submit" class="btn btn-primary w-100">ЗАПАЗИ</button><button type="button" id="btnDeleteClient" class="btn btn-outline-danger btn-admin-only" style="display:none;" onclick="deleteItem('Client', document.getElementById('c_id').value)">ИЗТРИЙ</button></div></form></div></div></div>
+    <div class="modal fade" id="empModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content p-4 border-0 rounded-4 shadow"><form id="empForm"><input type="hidden" name="ID_Emp" id="e_id"><h5>Служител</h5><input type="text" name="Name" id="e_name" class="form-control mb-2" required placeholder="Име"><input type="email" id="e_email" name="Email" class="form-control mb-2" required placeholder="Email"><input type="text" name="Phone" id="e_phone" class="form-control mb-2" placeholder="Телефон"><div class="row mb-3"><div class="col"><input type="number" name="Rate2h" id="e_r1" class="form-control" placeholder="Фикс 2ч"></div><div class="col"><input type="number" step="0.01" name="RateMin" id="e_r2" class="form-control" placeholder="Мин став."></div></div><div class="admin-only-fields"><div class="row mb-3"><div class="col"><label class="small fw-bold">Парола</label><input type="text" name="Password" id="e_pass" class="form-control"></div><div class="col"><label class="small fw-bold">Роля</label><select name="Role" id="e_role" class="form-select"><option value="Employee">Employee</option><option value="Manager">Manager</option><option value="Admin">Admin</option></select></div></div></div><div class="d-flex gap-2"><button type="submit" class="btn btn-primary w-100">ЗАПАЗИ</button><button type="button" id="btnDeleteEmp" class="btn btn-outline-danger btn-admin-only" style="display:none;" onclick="deleteItem('Employee', document.getElementById('e_id').value)">ИЗТРИЙ</button></div></form></div></div></div>
+    <div class="modal fade" id="resourceModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content p-4 shadow-lg border-0 rounded-4"><form id="resourceForm"><input type="hidden" name="ID_Resource" id="r_id"><h5>Ресурс</h5><input type="text" name="Title" id="r_title" class="form-control mb-2" required placeholder="Заглавие"><input type="text" name="Link" id="r_link" class="form-control mb-2" placeholder="Линк (URL)"><textarea name="Notes" id="r_notes" class="form-control mb-3" placeholder="Бележки"></textarea><div class="d-flex gap-2"><button type="submit" class="btn btn-primary w-100">ЗАПАЗИ</button><button type="button" id="btnDeleteRes" class="btn btn-outline-danger btn-admin-only" style="display:none;" onclick="deleteItem('Resource', document.getElementById('r_id').value)">ИЗТРИЙ</button></div></form></div></div></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
@@ -180,7 +111,6 @@
                 const data = await resp.json();
                 if(data.error) throw new Error(data.error);
                 appData = data;
-                // Не запазваме в localStorage за да иска вход винаги
                 document.getElementById('loginScreen').style.display = 'none';
                 document.getElementById('mainApp').style.display = 'block';
                 renderAll();
@@ -196,11 +126,13 @@
             document.getElementById('userRoleBadge').innerText = appData.user.Role;
             
             if(!isAdmin) {
+                document.getElementById('link-settings').style.display = 'none';
                 document.getElementById('link-payroll').style.display = 'none';
                 document.getElementById('link-resources').style.display = 'none';
-                document.getElementById('link-settings').style.display = 'none';
                 document.querySelectorAll('.admin-only-fields').forEach(f => f.style.display = 'none');
                 document.querySelectorAll('.btn-admin-only').forEach(b => b.style.display = 'none');
+            } else {
+                document.querySelectorAll('.btn-admin-only').forEach(b => b.style.display = 'block');
             }
 
             // CALENDAR
@@ -220,16 +152,16 @@
             });
             calendar.render();
 
-            // TABLES
+            // TABLES & RESOURCES
             document.getElementById('orderListBody').innerHTML = appData.orders.sort((a,b) => new Date(b.Date) - new Date(a.Date)).map(o => `<tr><td>${o.Date} ${o.Time_Start_Plan}</td><td><b>${o.Client_ID}</b></td><td><span class="badge" style="background:${SERVICE_COLORS[o.Service]}">${o.Service}</span></td><td>${o.Address_Start}</td><td><button class="btn btn-sm btn-outline-primary" onclick="prepEdit('Order','${o.ID_Order}')"><i class="fas fa-edit"></i></button></td></tr>`).join('');
             document.getElementById('clientListBody').innerHTML = appData.clients.map(c => `<tr><td>${c.Name}</td><td>${c.Phone}</td><td>${c.Address_Main}</td><td><button class="btn btn-sm btn-outline-primary" onclick="prepEdit('Client','${c.ID_Client}')"><i class="fas fa-edit"></i></button></td></tr>`).join('');
-            document.getElementById('empStatusList').innerHTML = appData.employees.map(e => `<div class="col-md-4 mb-3"><div class="card p-3 text-center border-0 shadow-sm h-100"><div>${e.isOnline ? '<span class="online-dot"></span> <b>РАБОТИ</b>' : '<small class="text-muted">Офлайн</small>'}</div><h5 class="m-0 fw-bold">${e.Name}</h5><button class="btn btn-sm btn-light border mt-2" onclick="prepEdit('Employee','${e.ID_Emp}')"><i class="fas fa-edit"></i></button></div></div>`).join('');
+            document.getElementById('empStatusList').innerHTML = appData.employees.map(e => `<div class="col-md-4 mb-3"><div class="card p-3 text-center border-0 shadow-sm h-100"><div>${e.isOnline ? '<span class="online-dot"></span> <b>РАБОТИ</b>' : '<small class="text-muted">Офлайн</small>'}</div><h5 class="m-0 fw-bold">${e.Name}</h5><small class="text-muted">${e.Email}</small><button class="btn btn-sm btn-light border mt-2" onclick="prepEdit('Employee','${e.ID_Emp}')"><i class="fas fa-edit"></i></button></div></div>`).join('');
             
             if(isAdmin) {
-                document.getElementById('payrollTableBody').innerHTML = appData.employees.map(e => `<tr><td><b>${e.Name}</b></td><td>${e.Total_Hours || '0.0'} ч.</td><td class="text-success fw-bold">${e.Total_Unpaid_Eur || '0.00'} €</td><td><button class="btn btn-sm btn-outline-primary" onclick="viewEmployeeLogs('${e.ID_Emp}')">Корекции</button></td></tr>`).join('');
+                document.getElementById('payrollTableBody').innerHTML = appData.employees.map(e => `<tr><td>${e.Name}</td><td>${e.Total_Hours} ч.</td><td>${e.Total_Unpaid_Eur} €</td><td><button class="btn btn-sm btn-success">Плати</button></td></tr>`).join('');
                 document.getElementById('settingsEmpBody').innerHTML = appData.employees.map(e => `<tr><td>${e.Name}</td><td>${e.Role}</td><td><code>${e.Password}</code></td><td><button class="btn btn-sm btn-light border" onclick="prepEdit('Employee','${e.ID_Emp}')"><i class="fas fa-edit"></i></button></td></tr>`).join('');
                 const resBase = `<div class="col-md-6 mb-3"><a href="https://docs.google.com/spreadsheets/d/1eYld8WuswC1gZMjl81JWecw7XyC0p1mGihSpBViZahg/edit" target="_blank" class="card p-4 resource-card text-center text-decoration-none shadow-sm"><i class="fas fa-table fa-2x mb-2 text-success"></i><h5>База Данни</h5></a></div><div class="col-md-6 mb-3"><a href="https://mestimworkspace-stack.github.io/mestim-vsichko-team/" target="_blank" class="card p-4 resource-card text-center text-decoration-none shadow-sm"><i class="fas fa-mobile-alt fa-2x mb-2 text-primary"></i><h5>Екип Панел</h5></a></div>`;
-                document.getElementById('resourceList').innerHTML = resBase + (appData.resources || []).map(r => `<div class="col-md-6 mb-3"><div class="card p-4 resource-card" onclick="prepEdit('Resource','${r.ID_Resource}')"><h5>${r.Title}</h5><p class="small text-muted mb-0">${r.Notes || ''}</p></div></div>`).join('');
+                document.getElementById('resourceList').innerHTML = resBase + (appData.resources || []).map(r => `<div class="col-md-6 mb-3"><div class="card p-4 resource-card" onclick="prepEdit('Resource','${r.ID_Resource}')"><h5>${r.Title}</h5><p class="small text-muted">${r.Notes || ''}</p></div></div>`).join('');
             }
 
             document.getElementById('clientData').innerHTML = appData.clients.map(c => `<option value="${c.Name}"></option>`).join('');
@@ -243,33 +175,11 @@
             const ph = cl ? cl.Phone : '---';
             const team = appData.assignments.filter(a => String(a.Order_ID) === String(id)).map(a => appData.employees.find(e => String(e.ID_Emp) === String(a.Emp_ID))?.Name).join(', ');
             const photos = o.Photos ? o.Photos.split(',').filter(p=>p).map((p,i)=>`<a href="${p}" target="_blank" class="btn btn-xs btn-outline-info me-1 mt-1 shadow-sm">Снимка ${i+1}</a>`).join('') : 'Няма';
-            
             Swal.fire({
                 title: `<span style="color:${SERVICE_COLORS[o.Service]}">${o.Service}</span>`,
-                html: `<div class="text-start border-top pt-3 small"><p><b>Клиент:</b> ${o.Client_ID}<br><b>Тел:</b> <a href="tel:${ph}">${ph}</a></p><p><b>Час:</b> ${o.Time_Start_Plan} - ${o.Time_End_Plan || '---'}</p><p><b>Адреси:</b> <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(o.Address_Start)}" target="_blank">${o.Address_Start}</a></p><p><b>Екип:</b> ${team || 'Няма'}</p><div class="mb-2"><b>Снимки:</b><br>${photos}</div><p class="small bg-light p-2 rounded"><b>Описание:</b> ${o.Description || '-'}</p></div>`,
+                html: `<div class="text-start border-top pt-3 small"><p><b>Клиент:</b> ${o.Client_ID}<br><b>Тел:</b> <a href="tel:${ph}">${ph}</a></p><p><b>Час:</b> ${o.Time_Start_Plan} - ${o.Time_End_Plan || '---'}</p><p><b>Адрес:</b> <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(o.Address_Start)}" target="_blank">${o.Address_Start}</a></p><p><b>Екип:</b> ${team || 'Няма'}</p><div class="mb-2"><b>Снимки:</b><br>${photos}</div><p class="small bg-light p-2 rounded"><b>Описание:</b> ${o.Description || '-'}</p></div>`,
                 confirmButtonText: 'Редактирай', showCancelButton: true, confirmButtonColor: '#1a3c5a'
             }).then(r => { if(r.isConfirmed) prepEdit('Order', id); });
-        }
-
-        async function viewEmployeeLogs(empId) {
-            const logs = appData.workLogs.filter(l => String(l.Emp_ID) === String(empId) && l.Payment_Status === "Unpaid");
-            let html = '<div class="list-group">';
-            logs.forEach(l => { html += `<div class="list-group-item d-flex justify-content-between align-items-center"><span>${l.Clock_In}</span><button class="btn btn-sm btn-primary" onclick="openFinanceModal('${l.ID_Log}')">Корекция</button></div>`; });
-            html += '</div>';
-            Swal.fire({ title: 'Работни дни', html: html, showConfirmButton: false });
-        }
-
-        async function openFinanceModal(logId) {
-            const l = appData.workLogs.find(x => String(x.ID_Log) === String(logId));
-            const { value: v } = await Swal.fire({
-                title: 'Бонуси и Глоби',
-                html: `Шофьор: <input id="f-dr" class="swal2-input" value="${l.Driver_Bonus || 0}">` +
-                      `Коорд: <input id="f-co" class="swal2-input" value="${l.Coord_Bonus || 0}">` +
-                      `Бонус: <input id="f-ex" class="swal2-input" value="${l.Extra_Bonus || 0}">` +
-                      `Глоба: <input id="f-fi" class="swal2-input" value="${l.Fine_Penalty || 0}">`,
-                preConfirm: () => [document.getElementById('f-dr').value, document.getElementById('f-co').value, document.getElementById('f-ex').value, document.getElementById('f-fi').value]
-            });
-            if(v) await send({ action: "updateFinance", logId: logId, driver: v[0], coord: v[1], bonus: v[2], fine: v[3] });
         }
 
         async function send(d) { 
@@ -332,8 +242,8 @@
             }
         }
 
-        async function deleteItem(t, id) { if(confirm('Сигурни ли сте в изтриването?')) { await send({action: "delete"+t, id: id}); } }
-        function showSection(id) { document.querySelectorAll('section').forEach(s => s.style.display = 'none'); document.getElementById('page-'+id).style.display = 'block'; if(calendar) { calendar.render(); calendar.updateSize(); } }
+        async function deleteItem(t, id) { if(confirm('Изтриване?')) { await send({action: "delete"+t, id: id}); } }
+        function showSection(id) { document.querySelectorAll('section').forEach(s => s.style.display = 'none'); document.getElementById(id).style.display = 'block'; if(calendar) { calendar.render(); calendar.updateSize(); } }
         function filterTable(tid, v) { const val = v.toLowerCase(); document.querySelectorAll(`#${tid} tbody tr`).forEach(tr => tr.style.display = tr.innerText.toLowerCase().includes(val) ? '' : 'none'); }
         function toggleLoader(s) { document.getElementById('loader').style.display = s ? 'flex' : 'none'; }
         function openOrderModal() { document.getElementById('orderForm').reset(); document.getElementById('o_id').value = ""; document.getElementById('btnDeleteOrder').style.display="none"; document.getElementById('photoPreview').innerHTML=""; new bootstrap.Modal(document.getElementById('orderModal')).show(); }
@@ -345,19 +255,7 @@
         document.getElementById('clientForm').onsubmit = (e) => { e.preventDefault(); const d = Object.fromEntries(new FormData(e.target)); d.action = d.ID_Client ? "editClient" : "addClient"; send(d); };
         document.getElementById('empForm').onsubmit = (e) => { e.preventDefault(); const d = Object.fromEntries(new FormData(e.target)); d.action = d.ID_Emp ? "editEmployee" : "addEmployee"; send(d); };
         document.getElementById('resourceForm').onsubmit = (e) => { e.preventDefault(); const d = Object.fromEntries(new FormData(e.target)); d.action = d.ID_Resource ? "editResource" : "addResource"; send(d); };
-        
-        async function uploadPhoto(i) { 
-            const f = i.files[0]; if(!f) return; 
-            const r = new FileReader(); toggleLoader(true); 
-            r.onload = async (e) => { 
-                const b64 = e.target.result.split(',')[1]; 
-                const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "uploadFile", fileName: f.name, mimeType: f.type, base64: b64 }) }); 
-                const url = await res.text(); 
-                document.getElementById('o_photos').value += url + ","; 
-                toggleLoader(false); Swal.fire('Качено!', '', 'success'); 
-            }; 
-            r.readAsDataURL(f); 
-        }
+        async function uploadPhoto(i) { const f = i.files[0]; if(!f) return; const r = new FileReader(); toggleLoader(true); r.onload = async (e) => { const b64 = e.target.result.split(',')[1]; const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "uploadFile", fileName: f.name, mimeType: f.type, base64: b64 }) }); const url = await res.text(); document.getElementById('o_photos').value += url + ","; toggleLoader(false); Swal.fire('Качено!', '', 'success'); }; r.readAsDataURL(f); }
     </script>
 </body>
 </html>
