@@ -3,288 +3,213 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Местим всичко ERP - Admin Pro</title>
+    <title>ERP OFFICE - Местим Всичко</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Montserrat:wght@700&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { font-family: 'Inter', sans-serif; background: #f4f7f6; margin: 0; color: #334155; }
-        h1, h2, h3, .sidebar, .btn, .fw-bold { font-family: 'Montserrat', sans-serif; }
-        .sidebar { height: 100vh; background: #1a3c5a; color: white; position: fixed; width: 250px; z-index: 1000; transition: 0.3s; }
-        .sidebar a { color: white; text-decoration: none; padding: 15px 25px; display: block; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .sidebar a:hover { background: #244d73; }
-        .content { margin-left: 250px; padding: 30px; min-height: 100vh; }
-        #calendar { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); min-height: 700px; }
-        .fc-event { cursor: pointer !important; }
-        .card { border: none; border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        #loginScreen { height: 100vh; display: flex; align-items: center; justify-content: center; background: #1a3c5a; position: fixed; width: 100%; top:0; left:0; z-index: 9999; }
-        #loader { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.9); display:none; align-items:center; justify-content:center; z-index:10000; flex-direction:column; }
-        .online-dot { height: 10px; width: 10px; background-color: #2ecc71; border-radius: 50%; display: inline-block; margin-right: 8px; }
-        .resource-card { transition: 0.3s; cursor: pointer; border-left: 5px solid #1a3c5a; background: white; }
-        .resource-card:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; }
+        h1, h2, h3 { font-family: 'Montserrat', sans-serif; }
+        .sidebar-btn { transition: all 0.2s; border-left: 4px solid transparent; }
+        .sidebar-btn.active { background: #1e293b; border-left: 4px solid #3b82f6; color: white; }
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; z-index: 50; }
+        .modal.active { display: flex; }
     </style>
 </head>
 <body>
 
-    <div id="loader"><i class="fas fa-spinner fa-spin fa-3x text-primary mb-3"></i><span>Синхронизиране...</span></div>
-
-    <!-- LOGIN -->
-    <div id="loginScreen">
-        <div class="text-center p-5 shadow-lg rounded-4 bg-white" style="max-width: 400px; width: 90%;">
-            <i class="fas fa-truck-loading fa-4x text-primary mb-4"></i>
-            <h3 class="fw-bold mb-2 text-dark">Местим всичко</h3>
-            <p class="text-muted mb-4">ERP Администрация</p>
-            <input type="email" id="logEmail" class="form-control mb-3 py-2 text-center rounded-pill" placeholder="Имейл">
-            <input type="password" id="logPass" class="form-control mb-4 text-center rounded-pill" placeholder="Парола">
-            <button class="btn btn-primary w-100 py-3 fw-bold rounded-pill shadow" onclick="tryLogin()">ВЛИЗАНЕ</button>
-            <div id="loginError" class="text-danger mt-3 small fw-bold"></div>
-        </div>
-    </div>
-
-    <!-- MAIN APP -->
-    <div id="mainApp" style="display:none;">
-        <div class="sidebar">
-            <div class="p-4 text-center text-white"><h4 class="fw-bold m-0 small text-uppercase">Местим всичко</h4><small id="userRoleBadge" class="badge bg-success mt-2"></small></div>
-            <a onclick="showSection('dashboard')"><i class="fas fa-calendar-alt me-2"></i> График</a>
-            <a onclick="showSection('orders-sec')"><i class="fas fa-truck me-2"></i> Поръчки</a>
-            <a onclick="showSection('clients-sec')"><i class="fas fa-users me-2"></i> Клиенти</a>
-            <a onclick="showSection('emps-sec')"><i class="fas fa-user-friends me-2"></i> Екип</a>
-            <a onclick="showSection('payroll-sec')" id="link-payroll"><i class="fas fa-euro-sign me-2"></i> Заплати</a>
-            <a onclick="showSection('resources-sec')"><i class="fas fa-link me-2"></i> Ресурси</a>
-            <a onclick="logout()" class="text-danger mt-4"><i class="fas fa-sign-out-alt me-2"></i> Изход</a>
+    <div class="flex min-h-screen">
+        <!-- SIDEBAR -->
+        <div class="w-64 bg-slate-900 text-slate-300 p-6 shrink-0">
+            <h1 class="text-white text-xl font-bold mb-10 tracking-tight">MESTIM <span class="text-blue-500">ERP</span></h1>
+            <nav class="space-y-2">
+                <button onclick="changeTab('Clients', this)" class="sidebar-btn active w-full text-left p-3 rounded-lg hover:bg-slate-800">👥 Клиенти</button>
+                <button onclick="changeTab('Employees', this)" class="sidebar-btn w-full text-left p-3 rounded-lg hover:bg-slate-800">👷 Служители</button>
+                <button onclick="changeTab('Resources', this)" class="sidebar-btn w-full text-left p-3 rounded-lg hover:bg-slate-800">📚 Ресурси</button>
+            </nav>
         </div>
 
-        <div class="content">
-            <!-- CALENDAR -->
-            <section id="section-dashboard">
-                <div class="d-flex justify-content-between mb-4"><h2>График</h2><button class="btn btn-success rounded-pill px-4 shadow" onclick="openOrderModal()">+ НОВА ПОРЪЧКА</button></div>
-                <div id="calendar"></div>
-            </section>
+        <!-- MAIN CONTENT -->
+        <main class="flex-1 p-8">
+            <div class="max-w-6xl mx-auto">
+                <header class="flex justify-between items-end mb-8">
+                    <div>
+                        <p class="text-slate-500 text-sm uppercase tracking-widest font-semibold">Управление</p>
+                        <h2 id="section-title" class="text-4xl font-extrabold text-slate-800">Клиенти</h2>
+                    </div>
+                    <button onclick="openModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-bold shadow-lg shadow-blue-200 transition-all transform hover:-translate-y-1">
+                        + ДОБАВИ НОВ
+                    </button>
+                </header>
 
-            <!-- PAYROLL -->
-            <section id="section-payroll-sec" style="display:none;">
-                <h2 class="fw-bold">Заплати и Бонуси</h2>
-                <div class="card p-3 shadow-sm"><table class="table align-middle"><thead><tr><th>Служител</th><th>Часове</th><th>Сума</th><th>Действие</th></tr></thead><tbody id="payrollTableBody"></tbody></table></div>
-            </section>
-
-            <!-- RESOURCES -->
-            <section id="section-resources-sec" style="display:none;">
-                <div class="d-flex justify-content-between mb-4"><h2>Ресурси</h2><button class="btn btn-primary btn-sm" onclick="openResourceModal()">+ ДОБАВИ</button></div>
-                <div class="row">
-                    <div class="col-md-6 mb-3"><a href="https://docs.google.com/spreadsheets/d/1eYld8WuswC1gZMjl81JWecw7XyC0p1mGihSpBViZahg/edit" target="_blank" class="card p-4 resource-card text-center text-decoration-none shadow-sm"><i class="fas fa-table fa-2x mb-2 text-success"></i><h5>База Данни (Sheets)</h5></a></div>
-                    <div class="col-md-6 mb-3"><a href="https://mestimworkspace-stack.github.io/mestim-vsichko-team/" target="_blank" class="card p-4 resource-card text-center text-decoration-none shadow-sm"><i class="fas fa-mobile-alt fa-2x mb-2 text-primary"></i><h5>Екип Панел</h5></a></div>
+                <!-- TABLE CARD -->
+                <div class="bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-100">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead class="bg-slate-50 border-b border-slate-100">
+                                <tr id="table-headers">
+                                    <th class="p-5 text-slate-400 font-medium italic text-sm text-center">Зареждане на данни...</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-body" class="divide-y divide-slate-50">
+                                <!-- Данните ще се заредят тук -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="no-data" class="hidden p-20 text-center">
+                        <p class="text-slate-400 text-lg">Няма намерени записи в тази секция.</p>
+                    </div>
                 </div>
-                <div class="row" id="resourceList"></div>
-            </section>
-
-            <!-- TABLES (Orders, Clients, Emps) -->
-            <section id="section-orders-sec" style="display:none;"><div class="d-flex justify-content-between mb-4"><h2>Поръчки</h2><input type="text" class="form-control w-50 shadow-sm" placeholder="Търси..." onkeyup="filterTable('orderTable', this.value)"></div><div class="card p-3 shadow-sm"><table class="table table-hover" id="orderTable"><thead><tr><th>Дата</th><th>Клиент</th><th>Услуга</th><th>Адрес</th><th>Действие</th></tr></thead><tbody id="orderListBody"></tbody></table></div></section>
-            <section id="section-clients-sec" style="display:none;"><div class="d-flex justify-content-between mb-4"><h2>Клиенти</h2><div class="d-flex w-75"><input type="text" class="form-control me-2 shadow-sm" placeholder="Търси..." onkeyup="filterTable('clientTable', this.value)"><button class="btn btn-primary shadow-sm" onclick="openClientModal()">+ НОВ КЛИЕНТ</button></div></div><div class="card p-3 shadow-sm"><table class="table align-middle" id="clientTable"><thead><tr><th>Име</th><th>Телефон</th><th>Адрес</th><th>Действия</th></tr></thead><tbody id="clientListBody"></tbody></table></div></section>
-            <section id="section-emps-sec" style="display:none;"><div class="d-flex justify-content-between mb-4"><h2>Екип статус</h2><button class="btn btn-primary" onclick="openEmpModal()">+ НОВ СЛУЖИТЕЛ</button></div><div id="empStatusList" class="row"></div></section>
-        </div>
+            </div>
+        </main>
     </div>
 
-    <!-- MODALS -->
-    <div class="modal fade" id="orderModal" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content p-4 shadow-lg border-0 rounded-4"><form id="orderForm"><input type="hidden" name="ID_Order" id="o_id"><h4>Детайли</h4><div class="row mb-3"><div class="col-md-6"><label class="small fw-bold">Клиент</label><input list="clientData" id="o_client" class="form-control" required placeholder="Търси..."><datalist id="clientData"></datalist></div><div class="col-md-6"><label class="small fw-bold">Услуга</label><select name="Service" id="o_service" class="form-select"></select></div></div><div class="row mb-3"><div class="col-md-4"><label class="small fw-bold">Дата</label><input type="date" name="Date" id="o_date" class="form-control" required></div><div class="col-md-4"><label class="small fw-bold">Начало</label><input type="time" name="TimeStart" id="o_start" class="form-control" required></div><div class="col-md-4"><label class="small fw-bold">Край</label><input type="time" name="TimeEnd" id="o_end" class="form-control"></div></div><div class="row mb-3"><div class="col-md-6"><label class="small fw-bold">ОТ Адрес</label><input type="text" name="AddrStart" id="o_addr1" class="form-control" required></div><div class="col-md-6"><label class="small fw-bold">ДО Адрес</label><input type="text" name="AddrEnd" id="o_addr2" class="form-control" required></div></div><div class="card p-3 bg-light mb-3 border-0"><h6>Екип:</h6><div id="teamPick" class="row"></div></div><div class="mb-3"><label class="small fw-bold">Снимки</label><input type="file" class="form-control mb-2" onchange="uploadPhoto(this)"><input type="hidden" name="Photos" id="o_photos"><div id="photoPreview"></div></div><textarea name="Desc" id="o_desc" class="form-control mb-3" placeholder="Бележки..."></textarea><div class="d-flex gap-2"><button type="submit" class="btn btn-primary w-100">ЗАПАЗИ</button><button type="button" id="btnDeleteOrder" class="btn btn-outline-danger btn-admin-only" onclick="deleteItem('Order', document.getElementById('o_id').value)">ИЗТРИЙ</button></div></form></div></div></div>
-    <div class="modal fade" id="clientModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content p-4 border-0 rounded-4 shadow"><form id="clientForm"><input type="hidden" name="ID_Client" id="c_id"><h5>Клиент</h5><input type="text" name="Name" id="c_name" class="form-control mb-2" required placeholder="Име"><input type="text" name="Phone" id="c_phone" class="form-control mb-2" required placeholder="Телефон"><input type="text" name="Address" id="c_addr" class="form-control mb-2" placeholder="Адрес"><textarea name="Notes" id="c_notes" class="form-control mb-3" placeholder="Бележки"></textarea><div class="d-flex gap-2"><button type="submit" class="btn btn-primary w-100">ЗАПАЗИ</button><button type="button" id="btnDeleteClient" class="btn btn-outline-danger btn-admin-only" onclick="deleteItem('Client', document.getElementById('c_id').value)">ИЗТРИЙ</button></div></form></div></div></div>
-    <div class="modal fade" id="empModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content p-4 border-0 rounded-4 shadow"><form id="empForm"><input type="hidden" name="ID_Emp" id="e_id"><h5>Служител</h5><input type="text" name="Name" id="e_name" class="form-control mb-2" required placeholder="Име"><input type="email" id="e_email" name="Email" class="form-control mb-2" required placeholder="Email"><input type="text" name="Phone" id="e_phone" class="form-control mb-2" placeholder="Телефон"><div class="row mb-3"><div class="col"><input type="number" name="Rate2h" id="e_r1" class="form-control" placeholder="Фикс 2ч"></div><div class="col"><input type="number" step="0.01" name="RateMin" id="e_r2" class="form-control" placeholder="Мин став."></div></div><div class="admin-fields"><div class="row mb-3"><div class="col"><label class="small fw-bold">Парола</label><input type="text" name="Password" id="e_pass" class="form-control"></div><div class="col"><label class="small fw-bold">Роля</label><select name="Role" id="e_role" class="form-select"><option value="Employee">Employee</option><option value="Manager">Manager</option><option value="Admin">Admin</option></select></div></div></div><div class="d-flex gap-2"><button type="submit" class="btn btn-primary w-100">ЗАПАЗИ</button><button type="button" id="btnDeleteEmp" class="btn btn-outline-danger btn-admin-only" onclick="deleteItem('Employee', document.getElementById('e_id').value)">ИЗТРИЙ</button></div></form></div></div></div>
-    <div class="modal fade" id="resourceModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content p-4 shadow-lg border-0 rounded-4"><form id="resourceForm"><input type="hidden" name="ID_Resource" id="r_id"><h5>Ресурс</h5><input type="text" name="Title" id="r_title" class="form-control mb-2" required placeholder="Заглавие"><input type="text" name="Link" id="r_link" class="form-control mb-2" placeholder="Линк (URL)"><textarea name="Notes" id="r_notes" class="form-control mb-3" placeholder="Бележки"></textarea><div class="d-flex gap-2"><button type="submit" class="btn btn-primary w-100">ЗАПАЗИ</button><button type="button" id="btnDeleteRes" class="btn btn-outline-danger btn-admin-only" onclick="deleteItem('Resource', document.getElementById('r_id').value)">ИЗТРИЙ</button></div></form></div></div></div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales/bg.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- MODAL FORM -->
+    <div id="entryModal" class="modal p-4">
+        <div class="bg-white rounded-3xl w-full max-w-md p-8 shadow-2xl overflow-hidden relative">
+            <h3 id="modal-title" class="text-2xl font-bold text-slate-800 mb-6">Нов запис</h3>
+            <form id="dataForm" onsubmit="handleSave(event)" class="space-y-4">
+                <div id="form-fields" class="space-y-4">
+                    <!-- Полетата се генерират автоматично спрямо таба -->
+                </div>
+                <div class="flex gap-3 mt-8">
+                    <button type="button" onclick="closeModal()" class="flex-1 bg-slate-100 text-slate-600 py-3 rounded-xl font-bold hover:bg-slate-200">Отказ</button>
+                    <button type="submit" id="saveBtn" class="flex-1 bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 shadow-lg shadow-blue-200">Запази</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbzhwayZsmrfpqcCbNS2A7W67YJ3NPKOAVlH3x-99fYwh-mWbCbQZEIXVvq3g0VP9F8Skw/exec";
-        const SERVICE_COLORS = { "Преместване": "#2ecc71", "Работа на екип": "#3498db", "Изхвърляне строителни": "#e67e22", "Изхвърляне мебели": "#95a5a6", "Транспорт": "#1abc9c", "Оглед": "#f1c40f", "Монтаж": "#e74c3c" };
-        let appData = {}; let calendar;
+        // --- КОНФИГУРАЦИЯ ---
+        const API_URL = 'https://script.google.com/macros/s/AKfycbwAKelVaD8tyPQFtIroMFbEwGlxJhaomGWsTKw_JlAjMyhjwQ2oqy5pBnhD_S38UiAL6Q/exec'; // СЛОЖИ ТВОЯ ЛИНК ТУК!
+        let currentTab = 'Clients';
 
-        async function tryLogin() {
-            const email = document.getElementById('logEmail').value.trim();
-            const pass = document.getElementById('logPass').value.trim();
-            if(!email || !pass) return;
-            toggleLoader(true);
+        // Функция за смяна на табовете
+        async function changeTab(tabName, element) {
+            console.log("Смяна на таб към:", tabName);
+            currentTab = tabName;
+            
+            // Визуална промяна на бутоните
+            document.querySelectorAll('.sidebar-btn').forEach(btn => btn.classList.remove('active'));
+            element.classList.add('active');
+            
+            // Промяна на заглавието
+            document.getElementById('section-title').innerText = element.innerText.split(' ')[1];
+            
+            // Зареждане на данни
+            await loadData();
+        }
+
+        // Зареждане на данни от Google Sheets
+        async function loadData() {
+            const tableHeaders = document.getElementById('table-headers');
+            const tableBody = document.getElementById('table-body');
+            const noData = document.getElementById('no-data');
+
+            tableBody.innerHTML = '<tr><td colspan="10" class="p-10 text-center text-slate-400 italic">Свързване с базата данни...</td></tr>';
+
             try {
-                const resp = await fetch(`${API_URL}?email=${email}&pass=${pass}`);
-                const data = await resp.json();
-                if(data.error) throw new Error(data.error);
-                appData = data;
-                document.getElementById('loginScreen').style.display = 'none';
-                document.getElementById('mainApp').style.display = 'block';
-                renderAll();
-                setTimeout(() => { if(calendar) { calendar.render(); calendar.updateSize(); } }, 300);
-            } catch(e) { document.getElementById('loginError').innerText = "Грешен имейл или парола!"; }
-            toggleLoader(false);
-        }
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'GET_DATA', tab: currentTab })
+                });
+                const result = await response.json();
 
-        window.onload = () => {
-            const e = localStorage.getItem('mestim_email'), p = localStorage.getItem('mestim_pass');
-            if(e && p) { document.getElementById('logEmail').value = e; document.getElementById('logPass').value = p; tryLogin(); }
-        };
-
-        function logout() { localStorage.clear(); location.reload(); }
-
-        function renderAll() {
-            const isAdmin = appData.user.Role === "Admin";
-            document.getElementById('userRoleBadge').innerText = appData.user.Role;
-            if(!isAdmin) {
-                document.getElementById('link-payroll').style.display = 'none';
-                document.getElementById('link-settings').style.display = 'none';
-                document.querySelectorAll('.admin-fields').forEach(f => f.style.display = 'none');
-                document.querySelectorAll('.btn-admin-only').forEach(b => b.style.display = 'none');
-            }
-
-            // CALENDAR
-            if (calendar) calendar.destroy();
-            calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
-                initialView: 'dayGridMonth', locale: 'bg',
-                headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek,timeGridDay' },
-                events: appData.orders.map(o => ({
-                    title: `${o.Service} | ${o.Client_ID}`,
-                    start: `${o.Date}T${o.Time_Start_Plan}`,
-                    end: o.Time_End_Plan ? `${o.Date}T${o.Time_End_Plan}` : null,
-                    color: SERVICE_COLORS[o.Service] || '#1a3c5a',
-                    allDay: false, extendedProps: o
-                })),
-                eventClick: (i) => showOrderDetails(i.event.extendedProps.ID_Order)
-            });
-            calendar.render();
-
-            // PAYROLL
-            document.getElementById('payrollTableBody').innerHTML = appData.employees.map(e => `
-                <tr><td><b>${e.Name}</b></td><td>${e.Total_Hours || '0.0'} ч.</td><td class="text-success fw-bold">${e.Total_Unpaid_Eur || '0.00'} €</td>
-                <td><button class="btn btn-sm btn-outline-primary" onclick="viewEmployeeLogs('${e.ID_Emp}')">Корекции</button></td></tr>
-            `).join('');
-
-            // TABLES
-            document.getElementById('orderListBody').innerHTML = appData.orders.sort((a,b) => new Date(b.Date) - new Date(a.Date)).map(o => `<tr><td>${o.Date} ${o.Time_Start_Plan}</td><td><b>${o.Client_ID}</b></td><td><span class="badge" style="background:${SERVICE_COLORS[o.Service]}">${o.Service}</span></td><td>${o.Address_Start}</td><td><button class="btn btn-sm btn-outline-primary" onclick="prepEdit('Order','${o.ID_Order}')"><i class="fas fa-edit"></i></button></td></tr>`).join('');
-            document.getElementById('clientListBody').innerHTML = appData.clients.map(c => `<tr><td>${c.Name}</td><td>${c.Phone}</td><td>${c.Address_Main}</td><td><button class="btn btn-sm btn-outline-primary" onclick="prepEdit('Client','${c.ID_Client}')"><i class="fas fa-edit"></i></button></td></tr>`).join('');
-            document.getElementById('empStatusList').innerHTML = appData.employees.map(e => `<div class="col-md-4 mb-3"><div class="card p-3 text-center border-0 shadow-sm h-100"><div>${e.isOnline ? '<span class="online-dot"></span> <b>РАБОТИ</b>' : '<small class="text-muted">Офлайн</small>'}</div><h5 class="m-0 fw-bold">${e.Name}</h5><button class="btn btn-sm btn-light border mt-2" onclick="prepEdit('Employee','${e.ID_Emp}')"><i class="fas fa-edit"></i></button></div></div>`).join('');
-            if(isAdmin) document.getElementById('settingsEmpBody').innerHTML = appData.employees.map(e => `<tr><td>${e.Name}</td><td>${e.Role}</td><td><code>${e.Password}</code></td><td><button class="btn btn-sm btn-light border" onclick="prepEdit('Employee','${e.ID_Emp}')"><i class="fas fa-edit"></i></button></td></tr>`).join('');
-
-            const adminLinks = `<div class="col-md-6 mb-3"><a href="https://docs.google.com/spreadsheets/d/1eYld8WuswC1gZMjl81JWecw7XyC0p1mGihSpBViZahg/edit" target="_blank" class="card p-4 resource-card text-center text-decoration-none shadow-sm"><i class="fas fa-table fa-2x mb-2 text-success"></i><h5>База Данни</h5></a></div><div class="col-md-6 mb-3"><a href="https://mestimworkspace-stack.github.io/mestim-vsichko-team/" target="_blank" class="card p-4 resource-card text-center text-decoration-none shadow-sm"><i class="fas fa-mobile-alt fa-2x mb-2 text-primary"></i><h5>Екип Панел</h5></a></div>`;
-            document.getElementById('resourceList').innerHTML = adminLinks + (appData.resources || []).map(r => `<div class="col-md-6 mb-3"><div class="card p-4 resource-card" onclick="prepEdit('Resource','${r.ID_Resource}')"><h5>${r.Title}</h5><p class="small text-muted mb-0">${r.Notes || ''}</p></div></div>`).join('');
-
-            document.getElementById('clientData').innerHTML = appData.clients.map(c => `<option value="${c.Name}"></option>`).join('');
-            document.getElementById('o_service').innerHTML = appData.services.map(s => `<option value="${s.trim()}">${s.trim()}</option>`).join('');
-            document.getElementById('teamPick').innerHTML = appData.employees.map(e => `<div class="col-4 small"><input type="checkbox" class="team-chk" value="${e.ID_Emp}" id="t_${e.ID_Emp}"> <label for="t_${e.ID_Emp}">${e.Name}</label></div>`).join('');
-        }
-
-        function showOrderDetails(id) {
-            const o = appData.orders.find(x => String(x.ID_Order) === String(id));
-            const cl = appData.clients.find(c => String(c.Name).trim() === String(o.Client_ID).trim());
-            const ph = cl ? cl.Phone : '---';
-            const team = appData.assignments.filter(a => String(a.Order_ID) === String(id)).map(a => appData.employees.find(e => String(e.ID_Emp) === String(a.Emp_ID))?.Name).join(', ');
-            const photos = o.Photos ? o.Photos.split(',').filter(p=>p).map((p,i)=>`<a href="${p}" target="_blank" class="btn btn-xs btn-outline-info me-1 mt-1 shadow-sm">Снимка ${i+1}</a>`).join('') : 'Няма';
-            Swal.fire({
-                title: `<span style="color:${SERVICE_COLORS[o.Service]}">${o.Service}</span>`,
-                html: `<div class="text-start border-top pt-3 small"><p><b>Клиент:</b> ${o.Client_ID}<br><b>Тел:</b> <a href="tel:${ph}">${ph}</a></p><p><b>Час:</b> ${o.Time_Start_Plan} - ${o.Time_End_Plan || '---'}</p><p><b>Адреси:</b> <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(o.Address_Start)}" target="_blank">${o.Address_Start}</a></p><p><b>Екип:</b> ${team || 'Няма'}</p><div class="mb-2"><b>Снимки:</b><br>${photos}</div><p class="small bg-light p-2 rounded mt-2"><b>Описание:</b> ${o.Description || '-'}</p></div>`,
-                confirmButtonText: 'Редактирай', showCancelButton: true, confirmButtonColor: '#1a3c5a'
-            }).then(r => { if(r.isConfirmed) prepEdit('Order', id); });
-        }
-
-        async function viewEmployeeLogs(empId) {
-            const logs = appData.workLogs.filter(l => String(l.Emp_ID) === String(empId) && l.Payment_Status === "Unpaid");
-            let html = '<div class="list-group">';
-            logs.forEach(l => { html += `<div class="list-group-item d-flex justify-content-between align-items-center"><span>${l.Clock_In}</span><button class="btn btn-sm btn-primary" onclick="openFinanceModal('${l.ID_Log}')">Корекция</button></div>`; });
-            html += '</div>';
-            Swal.fire({ title: 'Работни дни', html: html, showConfirmButton: false });
-        }
-
-        async function openFinanceModal(logId) {
-            const l = appData.workLogs.find(x => String(x.ID_Log) === String(logId));
-            const { value: v } = await Swal.fire({
-                title: 'Бонуси и Глоби',
-                html: `Шофьор: <input id="f-dr" class="swal2-input" value="${l.Driver_Bonus || 0}">` +
-                      `Коорд: <input id="f-co" class="swal2-input" value="${l.Coord_Bonus || 0}">` +
-                      `Бонус: <input id="f-ex" class="swal2-input" value="${l.Extra_Bonus || 0}">` +
-                      `Глоба: <input id="f-fi" class="swal2-input" value="${l.Fine_Penalty || 0}">`,
-                preConfirm: () => [document.getElementById('f-dr').value, document.getElementById('f-co').value, document.getElementById('f-ex').value, document.getElementById('f-fi').value]
-            });
-            if(v) await send({ action: "updateFinance", logId: logId, driver: v[0], coord: v[1], bonus: v[2], fine: v[3] });
-        }
-
-        function prepEdit(type, id) {
-            const isAdmin = appData.user.Role === 'Admin';
-            if(type === 'Order') {
-                const o = appData.orders.find(x => String(x.ID_Order) === String(id));
-                document.getElementById('orderForm').reset();
-                document.getElementById('o_id').value = o.ID_Order;
-                document.getElementById('o_client').value = o.Client_ID;
-                document.getElementById('o_service').value = o.Service;
-                document.getElementById('o_date').value = o.Date;
-                document.getElementById('o_start').value = o.Time_Start_Plan;
-                document.getElementById('o_end').value = o.Time_End_Plan;
-                document.getElementById('o_addr1').value = o.Address_Start;
-                document.getElementById('o_addr2').value = o.Address_End;
-                document.getElementById('o_desc').value = o.Description;
-                document.getElementById('o_photos').value = o.Photos || "";
-                const cur = (appData.assignments || []).filter(a => String(a.Order_ID) === String(id)).map(a => String(a.Emp_ID));
-                document.querySelectorAll('.team-chk').forEach(cb => cb.checked = cur.includes(cb.value));
-                document.getElementById('btnDeleteOrder').style.display = isAdmin ? 'block' : 'none';
-                new bootstrap.Modal(document.getElementById('orderModal')).show();
-            } else if(type === 'Employee') {
-                const e = appData.employees.find(x => String(x.ID_Emp) === String(id));
-                document.getElementById('empForm').reset();
-                document.getElementById('e_id').value = e.ID_Emp;
-                document.getElementById('e_name').value = e.Name;
-                document.getElementById('e_email').value = e.Email;
-                document.getElementById('e_phone').value = e.Phone;
-                document.getElementById('e_r1').value = e.Rate_First_2h_Eur;
-                document.getElementById('e_r2').value = e.Rate_Per_Min_Eur;
-                if(isAdmin) { document.getElementById('e_pass').value = e.Password || ""; document.getElementById('e_role').value = e.Role || "Employee"; }
-                document.getElementById('btnDeleteEmp').style.display = isAdmin ? 'block' : 'none';
-                new bootstrap.Modal(document.getElementById('empModal')).show();
-            } else if(type === 'Client') {
-                const c = appData.clients.find(x => String(x.ID_Client) === String(id));
-                document.getElementById('clientForm').reset();
-                document.getElementById('c_id').value = c.ID_Client;
-                document.getElementById('c_name').value = c.Name;
-                document.getElementById('c_phone').value = c.Phone;
-                document.getElementById('c_addr').value = c.Address_Main;
-                document.getElementById('c_notes').value = c.Notes;
-                document.getElementById('btnDeleteClient').style.display = isAdmin ? 'block' : 'none';
-                new bootstrap.Modal(document.getElementById('clientModal')).show();
-            } else if(type === 'Resource') {
-                const r = appData.resources.find(x => String(x.ID_Resource) === String(id));
-                document.getElementById('resourceForm').reset();
-                document.getElementById('r_id').value = r.ID_Resource;
-                document.getElementById('r_title').value = r.Title;
-                document.getElementById('r_link').value = r.Link;
-                document.getElementById('r_notes').value = r.Notes;
-                document.getElementById('btnDeleteRes').style.display = isAdmin ? 'block' : 'none';
-                new bootstrap.Modal(document.getElementById('resourceModal')).show();
+                if (result.success && result.data.length > 0) {
+                    noData.classList.add('hidden');
+                    const headers = Object.keys(result.data[0]);
+                    
+                    // Попълни хедърите
+                    tableHeaders.innerHTML = headers.map(h => `<th class="p-5 text-slate-500 font-bold text-sm uppercase">${h.replace('_', ' ')}</th>`).join('');
+                    
+                    // Попълни редовете
+                    tableBody.innerHTML = result.data.map(row => `
+                        <tr class="hover:bg-blue-50/50 transition-colors group">
+                            ${headers.map(h => `<td class="p-5 text-slate-600 text-sm border-b border-slate-50">${row[h] || '-'}</td>`).join('')}
+                        </tr>
+                    `).join('');
+                } else {
+                    tableHeaders.innerHTML = '';
+                    tableBody.innerHTML = '';
+                    noData.classList.remove('hidden');
+                }
+            } catch (error) {
+                console.error("Грешка:", error);
+                tableBody.innerHTML = '<tr><td colspan="10" class="p-10 text-center text-red-500 font-bold">ГРЕШКА: Провери API линка в кода!</td></tr>';
             }
         }
 
-        async function send(d) { 
-            toggleLoader(true); 
-            await fetch(API_URL, {method:'POST', mode:'no-cors', body:JSON.stringify(d)}); 
-            const resp = await fetch(`${API_URL}?email=${appData.user.Email}&pass=${appData.user.Password}`);
-            appData = await resp.json();
-            bootstrap.Modal.getOrCreateInstance(document.querySelector('.modal.show')).hide();
-            renderAll();
-            toggleLoader(false);
-            Swal.fire('Готово!', '', 'success');
+        // Управление на Модала (Формата)
+        function openModal() {
+            const formFields = document.getElementById('form-fields');
+            document.getElementById('modal-title').innerText = "Добави в " + currentTab;
+            
+            // Генериране на полета спрямо таба
+            let fields = '';
+            if(currentTab === 'Clients') {
+                fields = `
+                    <input type="text" name="Name" placeholder="Име на клиент" class="w-full p-4 bg-slate-50 border-0 rounded-xl focus:ring-2 focus:ring-blue-500" required>
+                    <input type="text" name="Phone" placeholder="Телефон" class="w-full p-4 bg-slate-50 border-0 rounded-xl focus:ring-2 focus:ring-blue-500" required>
+                    <input type="text" name="Address_Main" placeholder="Основен адрес" class="w-full p-4 bg-slate-50 border-0 rounded-xl focus:ring-2 focus:ring-blue-500">
+                `;
+            } else if(currentTab === 'Employees') {
+                fields = `
+                    <input type="text" name="Name" placeholder="Име на служител" class="w-full p-4 bg-slate-50 border-0 rounded-xl focus:ring-2 focus:ring-blue-500" required>
+                    <input type="email" name="Email" placeholder="Имейл" class="w-full p-4 bg-slate-50 border-0 rounded-xl focus:ring-2 focus:ring-blue-500" required>
+                    <input type="text" name="Password" placeholder="Парола" class="w-full p-4 bg-slate-50 border-0 rounded-xl focus:ring-2 focus:ring-blue-500" required>
+                    <select name="Role" class="w-full p-4 bg-slate-50 border-0 rounded-xl focus:ring-2 focus:ring-blue-500">
+                        <option value="Employee">Employee</option>
+                        <option value="Manager">Manager</option>
+                        <option value="Admin">Admin</option>
+                    </select>
+                `;
+            }
+            
+            formFields.innerHTML = fields;
+            document.getElementById('entryModal').classList.add('active');
         }
 
-        async function deleteItem(t, id) { if(confirm('Изтриване?')) { await send({action: "delete"+t, id: id}); } }
-        function showSection(id) { document.querySelectorAll('section').forEach(s => s.style.display = 'none'); document.getElementById('page-'+id).style.display = 'block'; if(calendar) { calendar.render(); calendar.updateSize(); } }
-        function filterTable(tid, v) { const val = v.toLowerCase(); document.querySelectorAll(`#${tid} tbody tr`).forEach(tr => tr.style.display = tr.innerText.toLowerCase().includes(val) ? '' : 'none'); }
-        function toggleLoader(s) { document.getElementById('loader').style.display = s ? 'flex' : 'none'; }
-        
-        function openOrderModal() { document.getElementById('orderForm').reset(); document.getElementById('o_id').value = ""; document.getElementById('btnDeleteOrder').style.display="none"; document.getElementById('photoPreview').innerHTML=""; new bootstrap.Modal(document.getElementById('orderModal')).show(); }
-        function openClientModal() { document.getElementById('clientForm').reset(); document.getElementById('c_id').value = ""; document.getElementById('btnDeleteClient').style.display="none"; new bootstrap.Modal(document.getElementById('clientModal')).show(); }
-        function openEmpModal() { document.getElementById('empForm').reset(); document.getElementById('e_id').value = ""; document.getElementById('btnDeleteEmp').style.display="none"; new bootstrap.Modal(document.getElementById('empModal')).show(); }
-        function openResourceModal() { document.getElementById('resourceForm').reset(); document.getElementById('r_id').value = ""; document.getElementById('btnDeleteRes').style.display="none"; new bootstrap.Modal(document.getElementById('resourceModal')).show(); }
+        function closeModal() {
+            document.getElementById('entryModal').classList.remove('active');
+        }
 
-        document.getElementById('orderForm').onsubmit = (e) => { e.preventDefault(); const d = Object.fromEntries(new FormData(e.target)); d.action = d.ID_Order ? "editOrder" : "addOrder"; d.ClientName = document.getElementById('o_client').value; d.TeamIds = Array.from(document.querySelectorAll('.team-chk:checked')).map(c => c.value); send(d); };
-        document.getElementById('clientForm').onsubmit = (e) => { e.preventDefault(); const d = Object.fromEntries(new FormData(e.target)); d.action = d.ID_Client ? "editClient" : "addClient"; send(d); };
-        document.getElementById('empForm').onsubmit = (e) => { e.preventDefault(); const d = Object.fromEntries(new FormData(e.target)); d.action = d.ID_Emp ? "editEmployee" : "addEmployee"; send(d); };
-        document.getElementById('resourceForm').onsubmit = (e) => { e.preventDefault(); const d = Object.fromEntries(new FormData(e.target)); d.action = d.ID_Resource ? "editResource" : "addResource"; send(d); };
-        async function uploadPhoto(i) { const f = i.files[0]; if(!f) return; const r = new FileReader(); toggleLoader(true); r.onload = async (e) => { const b64 = e.target.result.split(',')[1]; const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: "uploadFile", fileName: f.name, mimeType: f.type, base64: b64 }) }); const url = await res.text(); document.getElementById('o_photos').value += url + ","; toggleLoader(false); Swal.fire('Качено!', '', 'success'); }; r.readAsDataURL(f); }
+        // Запис на данни
+        async function handleSave(e) {
+            e.preventDefault();
+            const saveBtn = document.getElementById('saveBtn');
+            saveBtn.innerText = "Записване...";
+            saveBtn.disabled = true;
+
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+            
+            // Добавяме ID автоматично (просто за теста)
+            data.id = Date.now(); 
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ 
+                        action: 'SAVE_DATA', 
+                        tab: currentTab,
+                        data: data
+                    })
+                });
+                const result = await response.json();
+                if(result.success) {
+                    closeModal();
+                    loadData();
+                }
+            } catch (error) {
+                alert("Грешка при запис!");
+            } finally {
+                saveBtn.innerText = "Запази";
+                saveBtn.disabled = false;
+            }
+        }
+
+        // Първоначално стартиране
+        window.onload = () => loadData();
     </script>
 </body>
 </html>
