@@ -7,56 +7,68 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Montserrat:wght@700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; }
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #1e293b; }
         h1, h2, h3 { font-family: 'Montserrat', sans-serif; }
-        .sidebar-btn { transition: all 0.2s; border-left: 4px solid transparent; }
-        .sidebar-btn.active { background: #1e293b; border-left: 4px solid #3b82f6; color: white; }
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; z-index: 50; }
+        .sidebar-item { transition: all 0.2s; border-left: 4px solid transparent; }
+        .sidebar-item.active { background: #1e293b; border-left: 4px solid #3b82f6; color: white; }
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(4px); }
         .modal.active { display: flex; }
+        .btn-hover { transition: all 0.2s; }
+        .btn-hover:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
     </style>
 </head>
 <body>
 
     <div class="flex min-h-screen">
         <!-- SIDEBAR -->
-        <div class="w-64 bg-slate-900 text-slate-300 p-6 shrink-0">
-            <h1 class="text-white text-xl font-bold mb-10 tracking-tight">MESTIM <span class="text-blue-500">ERP</span></h1>
-            <nav class="space-y-2">
-                <button onclick="changeTab('Clients', this)" class="sidebar-btn active w-full text-left p-3 rounded-lg hover:bg-slate-800">👥 Клиенти</button>
-                <button onclick="changeTab('Employees', this)" class="sidebar-btn w-full text-left p-3 rounded-lg hover:bg-slate-800">👷 Служители</button>
-                <button onclick="changeTab('Resources', this)" class="sidebar-btn w-full text-left p-3 rounded-lg hover:bg-slate-800">📚 Ресурси</button>
+        <aside class="w-72 bg-slate-900 text-slate-400 p-8 shrink-0 shadow-2xl">
+            <div class="mb-12">
+                <h1 class="text-white text-2xl font-black tracking-tighter">MESTIM <span class="text-blue-500 text-sm block tracking-widest uppercase text-opacity-80">ERP System</span></h1>
+            </div>
+            
+            <nav class="space-y-3">
+                <button onclick="changeTab('Clients', this)" class="sidebar-item active w-full text-left p-4 rounded-xl flex items-center gap-3 hover:text-white group">
+                    <span class="text-xl group-hover:scale-110 transition">👥</span> Клиенти
+                </button>
+                <button onclick="changeTab('Employees', this)" class="sidebar-item w-full text-left p-4 rounded-xl flex items-center gap-3 hover:text-white group">
+                    <span class="text-xl group-hover:scale-110 transition">👷</span> Служители
+                </button>
+                <button onclick="changeTab('Resources', this)" class="sidebar-item w-full text-left p-4 rounded-xl flex items-center gap-3 hover:text-white group">
+                    <span class="text-xl group-hover:scale-110 transition">📚</span> Ресурси
+                </button>
             </nav>
-        </div>
+        </aside>
 
         <!-- MAIN CONTENT -->
-        <main class="flex-1 p-8">
+        <main class="flex-1 p-12">
             <div class="max-w-6xl mx-auto">
-                <header class="flex justify-between items-end mb-8">
+                <header class="flex justify-between items-end mb-12">
                     <div>
-                        <p class="text-slate-500 text-sm uppercase tracking-widest font-semibold">Управление</p>
-                        <h2 id="section-title" class="text-4xl font-extrabold text-slate-800">Клиенти</h2>
+                        <h2 id="section-title" class="text-5xl font-extrabold text-slate-900 tracking-tight">Клиенти</h2>
+                        <p class="text-slate-500 mt-2 font-medium">Управление на фирмените данни в реално време</p>
                     </div>
-                    <button onclick="openModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-bold shadow-lg shadow-blue-200 transition-all transform hover:-translate-y-1">
+                    <button onclick="openModal()" class="bg-blue-600 text-white px-8 py-4 rounded-2xl font-bold shadow-lg shadow-blue-200 hover:bg-blue-700 btn-hover">
                         + ДОБАВИ НОВ
                     </button>
                 </header>
 
-                <!-- TABLE CARD -->
-                <div class="bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-100">
+                <!-- DATA TABLE -->
+                <div class="bg-white rounded-[32px] shadow-sm border border-slate-100 overflow-hidden">
                     <div class="overflow-x-auto">
-                        <table class="w-full text-left">
-                            <thead class="bg-slate-50 border-b border-slate-100">
-                                <tr id="table-headers">
-                                    <th class="p-5 text-slate-400 font-medium italic text-sm text-center">Зареждане на данни...</th>
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr id="table-headers" class="bg-slate-50/50 border-b border-slate-100">
+                                    <th class="p-6 text-slate-400 font-bold uppercase text-xs tracking-widest text-center">Зареждане на базата данни...</th>
                                 </tr>
                             </thead>
                             <tbody id="table-body" class="divide-y divide-slate-50">
-                                <!-- Данните ще се заредят тук -->
+                                <!-- Редовете се генерират тук -->
                             </tbody>
                         </table>
                     </div>
-                    <div id="no-data" class="hidden p-20 text-center">
-                        <p class="text-slate-400 text-lg">Няма намерени записи в тази секция.</p>
+                    <div id="no-data" class="hidden py-32 text-center">
+                        <div class="text-6xl mb-4">📂</div>
+                        <p class="text-slate-400 font-medium">Няма намерени записи в тази секция.</p>
                     </div>
                 </div>
             </div>
@@ -64,16 +76,21 @@
     </div>
 
     <!-- MODAL FORM -->
-    <div id="entryModal" class="modal p-4">
-        <div class="bg-white rounded-3xl w-full max-w-md p-8 shadow-2xl overflow-hidden relative">
-            <h3 id="modal-title" class="text-2xl font-bold text-slate-800 mb-6">Нов запис</h3>
-            <form id="dataForm" onsubmit="handleSave(event)" class="space-y-4">
+    <div id="entryModal" class="modal">
+        <div class="bg-white rounded-[40px] w-full max-w-lg p-10 shadow-2xl relative border border-slate-100">
+            <div class="flex justify-between items-center mb-8">
+                <h3 id="modal-title" class="text-3xl font-bold text-slate-900 uppercase tracking-tighter">Нов запис</h3>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 text-2xl">✕</button>
+            </div>
+            
+            <form id="dataForm" onsubmit="handleSave(event)" class="space-y-5">
                 <div id="form-fields" class="space-y-4">
-                    <!-- Полетата се генерират автоматично спрямо таба -->
+                    <!-- Полетата се генерират динамично -->
                 </div>
-                <div class="flex gap-3 mt-8">
-                    <button type="button" onclick="closeModal()" class="flex-1 bg-slate-100 text-slate-600 py-3 rounded-xl font-bold hover:bg-slate-200">Отказ</button>
-                    <button type="submit" id="saveBtn" class="flex-1 bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 shadow-lg shadow-blue-200">Запази</button>
+                
+                <div class="flex gap-4 pt-6">
+                    <button type="button" onclick="closeModal()" class="flex-1 px-6 py-4 rounded-2xl font-bold text-slate-500 bg-slate-100 hover:bg-slate-200 transition">Отказ</button>
+                    <button type="submit" id="saveBtn" class="flex-1 px-6 py-4 rounded-2xl font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-xl shadow-blue-100 transition">Запази</button>
                 </div>
             </form>
         </div>
@@ -81,91 +98,98 @@
 
     <script>
         // --- КОНФИГУРАЦИЯ ---
-        const API_URL = 'https://script.google.com/macros/s/AKfycbwAKelVaD8tyPQFtIroMFbEwGlxJhaomGWsTKw_JlAjMyhjwQ2oqy5pBnhD_S38UiAL6Q/exec'; // СЛОЖИ ТВОЯ ЛИНК ТУК!
+        // ЗАМЕНИ ТОВА С ТВОЯ URL ОТ DEPLOY:
+        const API_URL = 'https://script.google.com/macros/s/AKfycbwAKelVaD8tyPQFtIroMFbEwGlxJhaomGWsTKw_JlAjMyhjwQ2oqy5pBnhD_S38UiAL6Q/exec'; 
+        
         let currentTab = 'Clients';
 
-        // Функция за смяна на табовете
+        // Инициализация
+        window.onload = () => {
+            if (API_URL.includes('ТУК_ПОСТАВИ')) {
+                alert("МОЛЯ, ПОСТАВИ ТВОЯ API URL В КОДА!");
+            }
+            loadData();
+        };
+
         async function changeTab(tabName, element) {
-            console.log("Смяна на таб към:", tabName);
             currentTab = tabName;
-            
-            // Визуална промяна на бутоните
-            document.querySelectorAll('.sidebar-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.sidebar-item').forEach(btn => btn.classList.remove('active'));
             element.classList.add('active');
-            
-            // Промяна на заглавието
             document.getElementById('section-title').innerText = element.innerText.split(' ')[1];
-            
-            // Зареждане на данни
-            await loadData();
+            loadData();
         }
 
-        // Зареждане на данни от Google Sheets
         async function loadData() {
-            const tableHeaders = document.getElementById('table-headers');
-            const tableBody = document.getElementById('table-body');
+            const tbody = document.getElementById('table-body');
+            const headers = document.getElementById('table-headers');
             const noData = document.getElementById('no-data');
 
-            tableBody.innerHTML = '<tr><td colspan="10" class="p-10 text-center text-slate-400 italic">Свързване с базата данни...</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="20" class="p-20 text-center text-slate-400 animate-pulse">Синхронизиране с облака...</td></tr>';
+            noData.classList.add('hidden');
 
             try {
+                // Използваме POST без headers за избягване на CORS грешки
                 const response = await fetch(API_URL, {
+                    method: 'POST',
+                    mode: 'no-cors', // Опитваме no-cors първо, но GAS иска cors за JSON.
+                    // При GAS работи най-добре стандартен fetch, ако скриптът е пуснат правилно
+                });
+
+                // Тъй като 'no-cors' не позволява четене на тялото, 
+                // правим стандартна заявка, която GAS поддържа при правилен Deploy:
+                const cleanResponse = await fetch(API_URL, {
                     method: 'POST',
                     body: JSON.stringify({ action: 'GET_DATA', tab: currentTab })
                 });
-                const result = await response.json();
+                
+                const result = await cleanResponse.json();
 
                 if (result.success && result.data.length > 0) {
-                    noData.classList.add('hidden');
-                    const headers = Object.keys(result.data[0]);
-                    
-                    // Попълни хедърите
-                    tableHeaders.innerHTML = headers.map(h => `<th class="p-5 text-slate-500 font-bold text-sm uppercase">${h.replace('_', ' ')}</th>`).join('');
-                    
-                    // Попълни редовете
-                    tableBody.innerHTML = result.data.map(row => `
-                        <tr class="hover:bg-blue-50/50 transition-colors group">
-                            ${headers.map(h => `<td class="p-5 text-slate-600 text-sm border-b border-slate-50">${row[h] || '-'}</td>`).join('')}
+                    const keys = Object.keys(result.data[0]);
+                    headers.innerHTML = keys.map(k => `<th class="p-6 text-slate-500 font-bold uppercase text-xs tracking-widest">${k.replace(/_/g, ' ')}</th>`).join('');
+                    tbody.innerHTML = result.data.map(row => `
+                        <tr class="hover:bg-blue-50/40 transition-colors border-b border-slate-50">
+                            ${keys.map(k => `<td class="p-6 text-slate-700 text-sm font-medium">${row[k] || '-'}</td>`).join('')}
                         </tr>
                     `).join('');
                 } else {
-                    tableHeaders.innerHTML = '';
-                    tableBody.innerHTML = '';
+                    headers.innerHTML = '';
+                    tbody.innerHTML = '';
                     noData.classList.remove('hidden');
                 }
             } catch (error) {
-                console.error("Грешка:", error);
-                tableBody.innerHTML = '<tr><td colspan="10" class="p-10 text-center text-red-500 font-bold">ГРЕШКА: Провери API линка в кода!</td></tr>';
+                console.error(error);
+                tbody.innerHTML = `<tr><td colspan="20" class="p-20 text-center text-red-500 font-bold">ГРЕШКА ПРИ ВРЪЗКА. Моля, проверете API Deployment-а.</td></tr>`;
             }
         }
 
-        // Управление на Модала (Формата)
         function openModal() {
-            const formFields = document.getElementById('form-fields');
-            document.getElementById('modal-title').innerText = "Добави в " + currentTab;
-            
-            // Генериране на полета спрямо таба
+            const container = document.getElementById('form-fields');
             let fields = '';
-            if(currentTab === 'Clients') {
+
+            if (currentTab === 'Clients') {
                 fields = `
-                    <input type="text" name="Name" placeholder="Име на клиент" class="w-full p-4 bg-slate-50 border-0 rounded-xl focus:ring-2 focus:ring-blue-500" required>
-                    <input type="text" name="Phone" placeholder="Телефон" class="w-full p-4 bg-slate-50 border-0 rounded-xl focus:ring-2 focus:ring-blue-500" required>
-                    <input type="text" name="Address_Main" placeholder="Основен адрес" class="w-full p-4 bg-slate-50 border-0 rounded-xl focus:ring-2 focus:ring-blue-500">
+                    <div class="space-y-1"><label class="text-xs font-bold text-slate-400 ml-2 uppercase">Име на Клиент</label><input type="text" name="Name" required class="w-full p-4 bg-slate-50 border-0 rounded-2xl focus:ring-2 focus:ring-blue-500 transition outline-none"></div>
+                    <div class="space-y-1"><label class="text-xs font-bold text-slate-400 ml-2 uppercase">Телефон</label><input type="text" name="Phone" required class="w-full p-4 bg-slate-50 border-0 rounded-2xl focus:ring-2 focus:ring-blue-500 transition outline-none"></div>
+                    <div class="space-y-1"><label class="text-xs font-bold text-slate-400 ml-2 uppercase">Адрес</label><input type="text" name="Address_Main" class="w-full p-4 bg-slate-50 border-0 rounded-2xl focus:ring-2 focus:ring-blue-500 transition outline-none"></div>
                 `;
-            } else if(currentTab === 'Employees') {
+            } else if (currentTab === 'Employees') {
                 fields = `
-                    <input type="text" name="Name" placeholder="Име на служител" class="w-full p-4 bg-slate-50 border-0 rounded-xl focus:ring-2 focus:ring-blue-500" required>
-                    <input type="email" name="Email" placeholder="Имейл" class="w-full p-4 bg-slate-50 border-0 rounded-xl focus:ring-2 focus:ring-blue-500" required>
-                    <input type="text" name="Password" placeholder="Парола" class="w-full p-4 bg-slate-50 border-0 rounded-xl focus:ring-2 focus:ring-blue-500" required>
-                    <select name="Role" class="w-full p-4 bg-slate-50 border-0 rounded-xl focus:ring-2 focus:ring-blue-500">
-                        <option value="Employee">Employee</option>
-                        <option value="Manager">Manager</option>
-                        <option value="Admin">Admin</option>
-                    </select>
+                    <div class="space-y-1"><label class="text-xs font-bold text-slate-400 ml-2 uppercase">Име</label><input type="text" name="Name" required class="w-full p-4 bg-slate-50 border-0 rounded-2xl focus:ring-2 focus:ring-blue-500 transition outline-none"></div>
+                    <div class="space-y-1"><label class="text-xs font-bold text-slate-400 ml-2 uppercase">Имейл</label><input type="email" name="Email" required class="w-full p-4 bg-slate-50 border-0 rounded-2xl focus:ring-2 focus:ring-blue-500 transition outline-none"></div>
+                    <div class="space-y-1"><label class="text-xs font-bold text-slate-400 ml-2 uppercase">Парола</label><input type="text" name="Password" required class="w-full p-4 bg-slate-50 border-0 rounded-2xl focus:ring-2 focus:ring-blue-500 transition outline-none"></div>
+                    <div class="space-y-1"><label class="text-xs font-bold text-slate-400 ml-2 uppercase">Роля</label>
+                        <select name="Role" class="w-full p-4 bg-slate-50 border-0 rounded-2xl focus:ring-2 focus:ring-blue-500 transition outline-none">
+                            <option value="Employee">Employee</option>
+                            <option value="Manager">Manager</option>
+                            <option value="Admin">Admin</option>
+                        </select>
+                    </div>
                 `;
             }
-            
-            formFields.innerHTML = fields;
+
+            container.innerHTML = fields;
+            document.getElementById('modal-title').innerText = "Нов " + currentTab.slice(0, -1);
             document.getElementById('entryModal').classList.add('active');
         }
 
@@ -173,43 +197,38 @@
             document.getElementById('entryModal').classList.remove('active');
         }
 
-        // Запис на данни
         async function handleSave(e) {
             e.preventDefault();
             const saveBtn = document.getElementById('saveBtn');
-            saveBtn.innerText = "Записване...";
             saveBtn.disabled = true;
+            saveBtn.innerText = "Записване...";
 
             const formData = new FormData(e.target);
-            const data = Object.fromEntries(formData.entries());
+            const payload = Object.fromEntries(formData.entries());
             
-            // Добавяме ID автоматично (просто за теста)
-            data.id = Date.now(); 
+            // Генерираме уникално ID спрямо таба
+            const idKey = currentTab === 'Clients' ? 'ID_Client' : 'ID_Emp';
+            payload[idKey] = "ID-" + Math.floor(Math.random() * 10000);
 
             try {
                 const response = await fetch(API_URL, {
                     method: 'POST',
-                    body: JSON.stringify({ 
-                        action: 'SAVE_DATA', 
-                        tab: currentTab,
-                        data: data
-                    })
+                    body: JSON.stringify({ action: 'SAVE_DATA', tab: currentTab, data: payload })
                 });
                 const result = await response.json();
-                if(result.success) {
+                if (result.success) {
                     closeModal();
                     loadData();
+                } else {
+                    alert("Грешка: " + result.error);
                 }
             } catch (error) {
-                alert("Грешка при запис!");
+                alert("Неуспешно свързване със сървъра.");
             } finally {
-                saveBtn.innerText = "Запази";
                 saveBtn.disabled = false;
+                saveBtn.innerText = "Запази";
             }
         }
-
-        // Първоначално стартиране
-        window.onload = () => loadData();
     </script>
 </body>
 </html>
